@@ -629,7 +629,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     }
 
 
-    @Override
+
     public void onUpdate() {
         Platform.runLater(new Runnable() {
             @Override
@@ -707,12 +707,12 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     }
 
 
-    @Override
+
     public void onInit() {
 
     }
 
-    @Override
+
     public void onPhysicsUpdate() {
         checkDestroyedCount();
         setPhysicsToBall();
@@ -743,7 +743,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     }
 
 
-    @Override
+
     public void onTime(long time) {
         this.time = time;
     }
