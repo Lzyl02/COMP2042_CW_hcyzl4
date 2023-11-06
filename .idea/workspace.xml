@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4a9654cc-8228-46f8-bed1-53c97c7733d1" name="Changes" comment="">
+    <list default="true" id="4a9654cc-8228-46f8-bed1-53c97c7733d1" name="Changes" comment="2 try">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/GameEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/GameEngine.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/Score.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/Score.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,17 +43,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "correctGameEngine",
-    "last_opened_file_path": "D:/javafx-sdk-21.0.1/lib",
-    "project.structure.last.edited": "Libraries",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;CorrectRunningError1&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/javafx-sdk-21.0.1/lib&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.new.ui&quot;
   }
-}]]></component>
+}</component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -61,6 +64,15 @@
       <option name="presentableId" value="Default" />
       <updated>1698315236811</updated>
     </task>
+    <task id="LOCAL-00001" summary="2 try">
+      <option name="closed" value="true" />
+      <created>1699089274396</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1699089274396</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">

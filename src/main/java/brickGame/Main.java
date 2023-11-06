@@ -18,6 +18,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.Random;
 
 public class Main extends Application implements EventHandler<KeyEvent>, GameEngine.OnAction {
@@ -705,7 +706,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             }
         }
     }
-
 
 
     public void onInit() {

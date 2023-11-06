@@ -1,8 +1,12 @@
 package brickGame;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class GameEngine {
     private OnAction onAction;
+
     public interface OnAction {
         void onUpdate();
 
@@ -12,10 +16,10 @@ public class GameEngine {
 
         void onTime(long time);
     }
+
     private int fps = 15;
-    private Thread updateThread;
-    private Thread physicsThread;
-    private volatile boolean isStopped = true;
+    private ScheduledExecutorService executor;
+    private boolean isStopped = true;
 
     public void setOnAction(OnAction onAction) {
         this.onAction = onAction;
@@ -26,18 +30,11 @@ public class GameEngine {
     }
 
     private void Update() {
-        updateThread = new Thread(() -> {
-            while (!Thread.currentThread().isInterrupted()) {
-                try {
-                    onAction.onUpdate();
-                    Thread.sleep(fps);
-                } catch (InterruptedException e) {
-                    // 处理线程被中断的情况
-                    Thread.currentThread().interrupt(); // 重新中断线程
-                }
-            }
-        });
-        updateThread.start();
+        executor = Executors.newScheduledThreadPool(2);
+
+        executor.scheduleAtFixedRate(() -> {
+            onAction.onUpdate();
+        }, 0, fps, TimeUnit.MILLISECONDS);
     }
 
     private void Initialize() {
@@ -45,17 +42,9 @@ public class GameEngine {
     }
 
     private void PhysicsCalculation() {
-        physicsThread = new Thread(() -> {
-            while (!Thread.currentThread().isInterrupted()) {
-                try {
-                    onAction.onPhysicsUpdate();
-                    Thread.sleep(fps);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-        });
-        physicsThread.start();
+        executor.scheduleAtFixedRate(() -> {
+            onAction.onPhysicsUpdate();
+        }, 0, fps, TimeUnit.MILLISECONDS);
     }
 
     public void start() {
@@ -68,10 +57,7 @@ public class GameEngine {
     public void stop() {
         if (!isStopped) {
             isStopped = true;
-            updateThread.interrupt(); // 使用interrupt方法中断线程
-            physicsThread.interrupt();
+            executor.shutdownNow();
         }
     }
-
-    // 其他成员变量和方法...
 }
