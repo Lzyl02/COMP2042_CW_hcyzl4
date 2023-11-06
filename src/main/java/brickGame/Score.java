@@ -29,15 +29,23 @@ public class Score {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                for (int i = 0; i < 21; i++) {
-                    try {
+                try {
+                    for (int i = 0; i < 21; i++) {
                         label.setScaleX(i);
                         label.setScaleY(i);
                         label.setOpacity((20 - i) / 20.0);
                         Thread.sleep(15);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } finally {
+                    // 在显示后一段时间后从界面上移除提示
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            main.root.getChildren().remove(label);
+                        }
+                    });
                 }
             }
         }).start();
