@@ -1,63 +1,76 @@
 package brickGame;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import javafx.application.Platform;
 
 public class GameEngine {
-    private OnAction onAction;
 
     public interface OnAction {
         void onUpdate();
-
-        void onInit();
-
         void onPhysicsUpdate();
-
         void onTime(long time);
+        void onInit();
     }
 
-    private int fps = 15;
-    private ScheduledExecutorService executor;
-    private boolean isStopped = true;
+    private OnAction onAction;
+    private int fps = 60;
+    private Thread gameThread;
+    private long time = 0;
+    private volatile boolean running = false;
 
     public void setOnAction(OnAction onAction) {
         this.onAction = onAction;
     }
 
     public void setFps(int fps) {
-        this.fps = (int) 1000 / fps;
+        this.fps = fps;
     }
 
-    private void Update() {
-        executor = Executors.newScheduledThreadPool(2);
-
-        executor.scheduleAtFixedRate(() -> {
-            onAction.onUpdate();
-        }, 0, fps, TimeUnit.MILLISECONDS);
+    private void initialize() {
+        // Ensure onInit is called on the JavaFX Application Thread
+        Platform.runLater(() -> onAction.onInit());
     }
 
-    private void Initialize() {
-        onAction.onInit();
-    }
+    private void gameLoop() {
+        while (running) {
+            // Ensure onUpdate is called on the JavaFX Application Thread
+            Platform.runLater(() -> onAction.onUpdate());
 
-    private void PhysicsCalculation() {
-        executor.scheduleAtFixedRate(() -> {
-            onAction.onPhysicsUpdate();
-        }, 0, fps, TimeUnit.MILLISECONDS);
+            // Ensure onPhysicsUpdate is called on the JavaFX Application Thread
+            Platform.runLater(() -> onAction.onPhysicsUpdate());
+
+            // Ensure onTime is called on the JavaFX Application Thread
+            Platform.runLater(() -> onAction.onTime(time));
+
+            time++;
+
+            try {
+                Thread.sleep(1000L / fps);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Restore the interrupted status
+                break; // Exit the loop to stop the thread
+            }
+        }
     }
 
     public void start() {
-        Initialize();
-        Update();
-        PhysicsCalculation();
-        isStopped = false;
+        if (running) {
+            return; // The game is already running
+        }
+        running = true;
+        initialize();
+        gameThread = new Thread(this::gameLoop);
+        gameThread.start();
     }
 
     public void stop() {
-        if (!isStopped) {
-            isStopped = true;
-            executor.shutdownNow();
+        running = false;
+        if (gameThread != null) {
+            gameThread.interrupt();
+            try {
+                gameThread.join(); // Wait for the thread to finish
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt(); // Restore the interrupted status
+            }
         }
     }
 }
