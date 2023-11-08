@@ -6,47 +6,31 @@ import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 //import sun.plugin2.message.Message;
-//hi
+
 public class Score {
     public void show(final double x, final double y, int score, final Main main) {
-        String sign;
-        if (score >= 0) {
-            sign = "+";
-        } else {
-            sign = "";
-        }
+        String sign = (score >= 0) ? "+" : "";
         final Label label = new Label(sign + score);
         label.setTranslateX(x);
         label.setTranslateY(y);
 
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                main.root.getChildren().add(label);
-            }
-        });
+        Platform.runLater(() -> main.root.getChildren().add(label));
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    for (int i = 0; i < 21; i++) {
-                        label.setScaleX(i);
-                        label.setScaleY(i);
-                        label.setOpacity((20 - i) / 20.0);
-                        Thread.sleep(15);
-                    }
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                } finally {
-                    // 在显示后一段时间后从界面上移除提示
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            main.root.getChildren().remove(label);
-                        }
+        new Thread(() -> {
+            try {
+                for (int i = 0; i < 21; i++) {
+                    final int finalI = i;
+                    Platform.runLater(() -> {
+                        label.setScaleX(finalI);
+                        label.setScaleY(finalI);
+                        label.setOpacity((20 - finalI) / 20.0);
                     });
+                    Thread.sleep(15);
                 }
+                // Remove the label after the animation
+                Platform.runLater(() -> main.root.getChildren().remove(label));
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }).start();
     }
