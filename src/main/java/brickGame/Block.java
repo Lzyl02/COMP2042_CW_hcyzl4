@@ -81,43 +81,36 @@ public class Block implements Serializable {
 
 
     public int checkHitToBlock(double xBall, double yBall) {
-
-        if (isDestroyed) {
+        if (isDestroyed || (xBall < x || xBall > x + width) || (yBall < y || yBall > y + height)) {
             return NO_HIT;
         }
 
         double xCenter = x + width / 2;
         double yCenter = y + height / 2;
-
         int ballRadius = 10;
         double dx = Math.abs(xBall - xCenter);
         double dy = Math.abs(yBall - yCenter);
-
         double halfWidth = width / 2;
         double halfHeight = height / 2;
-        if (isDestroyed) {
-            return NO_HIT;
+
+        if (xBall >= x && xBall <= x + width) {
+            if (yBall == y + height) {
+                return HIT_BOTTOM;
+            } else if (yBall == y) {
+                return HIT_TOP;
+            }
         }
 
-        if (xBall >= x && xBall <= x + width && yBall == y + height) {
-            return HIT_BOTTOM;
-        }
-
-        if (xBall >= x && xBall <= x + width && yBall == y) {
-            return HIT_TOP;
-        }
-
-        if (yBall >= y && yBall <= y + height && xBall == x + width) {
-            return HIT_RIGHT;
-        }
-
-        if (yBall >= y && yBall <= y + height && xBall == x) {
-            return HIT_LEFT;
+        if (yBall >= y && yBall <= y + height) {
+            if (xBall == x + width) {
+                return HIT_RIGHT;
+            } else if (xBall == x) {
+                return HIT_LEFT;
+            }
         }
 
         if (dx <= halfWidth + ballRadius && dy <= halfHeight + ballRadius) {
             if (dx > dy) {
-                // 侧面碰撞
                 return (xBall < xCenter) ? HIT_LEFT : HIT_RIGHT;
             } else {
                 return (yBall < yCenter) ? HIT_TOP : HIT_BOTTOM;
