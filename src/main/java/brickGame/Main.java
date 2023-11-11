@@ -30,8 +30,8 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     private int breakWidth = 130;
     private int breakHeight = 30;
     private int halfBreakWidth = breakWidth / 2;
-    private int sceneWidth = 500;
-    private int sceneHeight = 700;
+    public int sceneWidth = 500;
+    public int sceneHeight = 700;
     private static int LEFT = 1;
     private static int RIGHT = 2;
 
@@ -107,99 +107,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
 
 
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        this.primaryStage = primaryStage;
-
-
-        if (loadFromSave == false) {
-            level++;
-            if (level >1){
-                new Score().showMessage("Level Up :)", this);
-            }
-            if (level == 18) {
-                new Score().showWin(this);
-                return;
-            }
-
-            initBall();
-            initBreak();
-            initBoard();
-
-            load = new Button("Load Game");
-            newGame = new Button("Start New Game");
-            load.setTranslateX(220);
-            load.setTranslateY(300);
-            newGame.setTranslateX(220);
-            newGame.setTranslateY(340);
-
-        }
-
-
-        root = new Pane();
-        scoreLabel = new Label("Score: " + score);
-        levelLabel = new Label("Level: " + level);
-        levelLabel.setTranslateY(20);
-        heartLabel = new Label("Heart : " + heart);
-        heartLabel.setTranslateX(sceneWidth - 70);
-        if (loadFromSave == false) {
-            root.getChildren().addAll(rect, ball, scoreLabel, heartLabel, levelLabel, newGame);
-        } else {
-            root.getChildren().addAll(rect, ball, scoreLabel, heartLabel, levelLabel);
-        }
-        for (Block block : blocks) {
-            root.getChildren().add(block.rect);
-        }
-        Scene scene = new Scene(root, sceneWidth, sceneHeight);
-        scene.getStylesheets().add("style.css");
-        scene.setOnKeyPressed(this);
-
-        primaryStage.setTitle("Game");
-        primaryStage.setScene(scene);
-        primaryStage.show();
-
-        if (loadFromSave == false) {
-            if (level > 1 && level < 18) {
-                load.setVisible(false);
-                newGame.setVisible(false);
-                engine = new GameEngine();
-                engine.setOnAction(this);
-                engine.setFps(120);
-                engine.start();
-            }
-
-            load.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    loadGame();
-
-                    load.setVisible(false);
-                    newGame.setVisible(false);
-                }
-            });
-
-            newGame.setOnAction(new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    engine = new GameEngine();
-                    engine.setOnAction(Main.this);
-                    engine.setFps(120);
-                    engine.start();
-
-                    load.setVisible(false);
-                    newGame.setVisible(false);
-                }
-            });
-        } else {
-            engine = new GameEngine();
-            engine.setOnAction(this);
-            engine.setFps(120);
-            engine.start();
-            loadFromSave = false;
-        }
-
-
-    }
 
     private void initBoard() {
         for (int i = 0; i < 4; i++) {
@@ -228,65 +135,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             }
         }
     }
-
-
-    public static void main(String[] args) {
-        launch(args);
-    }
-
-    @Override
-    public void handle(KeyEvent event) {
-        switch (event.getCode()) {
-            case LEFT:
-                move(LEFT);
-                break;
-            case RIGHT:
-
-                move(RIGHT);
-                break;
-            case DOWN:
-                //setPhysicsToBall();
-                break;
-            case S:
-                saveGame();
-                break;
-        }
-    }
-
-    private void move(final int direction) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                int sleepTime = 4;
-                for (int i = 0; i < 30; i++) {
-                    if (xBreak == (sceneWidth - breakWidth) && direction == RIGHT) {
-                        return;
-                    }
-                    if (xBreak == 0 && direction == LEFT) {
-                        return;
-                    }
-                    if (direction == RIGHT) {
-                        xBreak++;
-                    } else {
-                        xBreak--;
-                    }
-                    centerBreakX = xBreak + halfBreakWidth;
-                    try {
-                        Thread.sleep(sleepTime);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (i >= 20) {
-                        sleepTime = i;
-                    }
-                }
-            }
-        }).start();
-
-
-    }
-
-
     private void initBall() {
         Random random = new Random();
         xBall = random.nextInt(sceneWidth) + 1;
@@ -309,20 +157,69 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     }
 
 
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        this.primaryStage = primaryStage;
 
-    private void resetCollideFlags() {
+        if (!loadFromSave) {
+            handleLevelUp();
+            if (level == 18) {
+                new Score().showWin(this);
+                return;
+            }
 
-        collideToBreak = false;
-        collideToBreakAndMoveToRight = false;
-        collideToRightWall = false;
-        collideToLeftWall = false;
+            initializeGameElements();
+            setupButtons();
+        }
 
-        collideToRightBlock = false;
-        collideToBottomBlock = false;
-        collideToLeftBlock = false;
-        collideToTopBlock = false;
+        initializeRoot();
+        addGameElementsToRoot();
+        createAndShowScene();
+
+        if (!loadFromSave) {
+            handleGameStartActions();
+        } else {
+            handleGameFromSave();
+        }
+
+
     }
 
+
+    private void setupGameEngine() {
+        engine = new GameEngine();
+        engine.setOnAction(this);
+        engine.setFps(120);
+        engine.start();
+    }
+
+    public static void main(String[] args) {
+        launch(args);
+
+
+    }
+
+    @Override
+    public void handle(KeyEvent event) {
+        switch (event.getCode()) {
+            case LEFT:
+                move(LEFT);
+                break;
+            case RIGHT:
+
+                move(RIGHT);
+                break;
+            case DOWN:
+                //setPhysicsToBall();
+                break;
+            case S:
+                saveGame();
+                break;
+        }
+    }
+
+
+    //GameLogic
     private void setPhysicsToBall() {
         //v = ((time - hitTime) / 1000.000) + 1.000;
 
@@ -386,7 +283,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
                 } else {
                     collideToBreakAndMoveToRight = false;
                 }
-                //System.out.println("Colide2");
+                //System.out.println("Collide2");
             }
         }
 
@@ -410,7 +307,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             }
         }
 
-        //Wall Colide
+        //Wall Collide
 
         if (collideToRightWall) {
             goRightBall = false;
@@ -420,7 +317,7 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
             goRightBall = true;
         }
 
-        //Block Colide
+        //Block Collide
 
         if (collideToRightBlock) {
             goRightBall = true;
@@ -441,6 +338,18 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
     }
 
+    private void resetCollideFlags() {
+
+        collideToBreak = false;
+        collideToBreakAndMoveToRight = false;
+        collideToRightWall = false;
+        collideToLeftWall = false;
+
+        collideToRightBlock = false;
+        collideToBottomBlock = false;
+        collideToLeftBlock = false;
+        collideToTopBlock = false;
+    }
 
     private void checkDestroyedCount() {
         if (destroyedBlockCount == blocks.size()) {
@@ -451,6 +360,303 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
         }
     }
 
+
+
+    private void nextLevel() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    vX = 1.000;
+
+                    engine.stop();
+                    resetCollideFlags();
+                    goDownBall = true;
+
+                    isGoldStatus = false;
+                    isExistHeartBlock = false;
+
+
+                    hitTime = 0;
+                    time = 0;
+                    goldTime = 0;
+
+                    engine.stop();
+                    blocks.clear();
+                    chocos.clear();
+                    destroyedBlockCount = 0;
+                    start(primaryStage);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+
+    public void restartGame() {
+
+        try {
+            level = 0;
+            heart = 3;
+            score = 0;
+            vX = 1.000;
+            destroyedBlockCount = 0;
+            resetCollideFlags();
+            goDownBall = true;
+
+            isGoldStatus = false;
+            isExistHeartBlock = false;
+            hitTime = 0;
+            time = 0;
+            goldTime = 0;
+
+            blocks.clear();
+            chocos.clear();
+
+            start(primaryStage);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    //GameEngine
+    public void onUpdate() {
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+
+                scoreLabel.setText("Score: " + score);
+                heartLabel.setText("Heart : " + heart);
+
+                rect.setX(xBreak);
+                rect.setY(yBreak);
+                ball.setCenterX(xBall);
+                ball.setCenterY(yBall);
+
+                for (Bonus choco : chocos) {
+                    choco.choco.setY(choco.y);
+                }
+            }
+        });
+
+
+        if (yBall >= Block.getPaddingTop() && yBall <= (Block.getHeight() * (level + 1)) + Block.getPaddingTop()) {
+            for (final Block block : blocks) {
+                int hitCode = block.checkHitToBlock(xBall, yBall);
+                if (hitCode != Block.NO_HIT) {
+                    score += 1;
+
+                    new Score().show(block.x, block.y, 1, this);
+
+                    block.rect.setVisible(false);
+                    block.isDestroyed = true;
+                    destroyedBlockCount++;
+                    //System.out.println("size is " + blocks.size());
+                    resetCollideFlags();
+
+                    if (block.type == Block.BLOCK_CHOCO) {
+                        final Bonus choco = new Bonus(block.row, block.column);
+                        choco.timeCreated = time;
+                        Platform.runLater(new Runnable() {
+                            @Override
+                            public void run() {
+                                root.getChildren().add(choco.choco);
+                            }
+                        });
+                        chocos.add(choco);
+                    }
+
+                    if (block.type == Block.BLOCK_STAR) {
+                        goldTime = time;
+                        ball.setFill(new ImagePattern(new Image("goldball.png")));
+                        System.out.println("gold ball");
+                        root.getStyleClass().add("goldRoot");
+                        isGoldStatus = true;
+                    }
+
+                    if (block.type == Block.BLOCK_HEART) {
+                        heart++;
+                    }
+
+                    if (hitCode == Block.HIT_RIGHT) {
+                        collideToRightBlock = true;
+                    } else if (hitCode == Block.HIT_BOTTOM) {
+                        collideToBottomBlock = true;
+                    } else if (hitCode == Block.HIT_LEFT) {
+                        collideToLeftBlock = true;
+                    } else if (hitCode == Block.HIT_TOP) {
+                        collideToTopBlock = true;
+                    }
+
+                }
+
+                //TODO hit to break and some work here....
+                //System.out.println("Break in row:" + block.row + " and column:" + block.column + " hit");
+            }
+        }
+    }
+
+    public void onInit() {
+
+    }
+
+    public void onPhysicsUpdate() {
+        checkDestroyedCount();
+        setPhysicsToBall();
+
+
+        if (time - goldTime > 5000) {
+            ball.setFill(new ImagePattern(new Image("ball.png")));
+            root.getStyleClass().remove("goldRoot");
+            isGoldStatus = false;
+        }
+
+        for (Bonus choco : chocos) {
+            if (choco.y > sceneHeight || choco.taken) {
+                continue;
+            }
+            if (choco.y >= yBreak && choco.y <= yBreak + breakHeight && choco.x >= xBreak && choco.x <= xBreak + breakWidth) {
+                System.out.println("You Got it and +3 score for you");
+                choco.taken = true;
+                choco.choco.setVisible(false);
+                score += 3;
+                new Score().show(choco.x, choco.y, 3, this);
+            }
+            choco.y += ((time - choco.timeCreated) / 1000.000) + 1.000;
+        }
+
+        //System.out.println("time is:" + time + " goldTime is " + goldTime);
+
+    }
+
+    public void onTime(long time) {
+        this.time = time;
+    }
+
+    //GameUI
+    private void initializeRoot() {
+        root = new Pane();
+        scoreLabel = new Label("Score: " + score);
+        levelLabel = new Label("Level: " + level);
+        levelLabel.setTranslateY(20);
+        heartLabel = new Label("Heart : " + heart);
+        heartLabel.setTranslateX(sceneWidth - 70);
+    }
+
+    private void addGameElementsToRoot() {
+        if (!loadFromSave) {
+            root.getChildren().addAll(rect, ball, scoreLabel, heartLabel, levelLabel, newGame);
+        } else {
+            root.getChildren().addAll(rect, ball, scoreLabel, heartLabel, levelLabel);
+        }
+        for (Block block : blocks) {
+            root.getChildren().add(block.rect);
+        }
+    }
+
+    private void createAndShowScene() {
+        Scene scene = new Scene(root, sceneWidth, sceneHeight);
+        scene.getStylesheets().add("style.css");
+        scene.setOnKeyPressed(this);
+
+        primaryStage.setTitle("Game");
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    //GameActions
+    private void handleLevelUp() {
+        level++;
+        if (level > 1) {
+            new Score().showMessage("Level Up :)", this);
+        }
+    }
+
+    private void initializeGameElements() {
+        initBall();
+        initBreak();
+        initBoard();
+    }
+
+    private void setupButtons() {
+        load = new Button("Load Game");
+        newGame = new Button("Start New Game");
+        load.setTranslateX(220);
+        load.setTranslateY(300);
+        newGame.setTranslateX(220);
+        newGame.setTranslateY(340);
+    }
+
+    private void handleGameStartActions() {
+        if (level > 1 && level < 18) {
+            load.setVisible(false);
+            newGame.setVisible(false);
+            setupGameEngine();
+        }
+        setupButtonActions();
+    }
+
+    private void setupButtonActions() {
+        load.setOnAction(event -> {
+            loadGame();
+            load.setVisible(false);
+            newGame.setVisible(false);
+        });
+
+        newGame.setOnAction(event -> {
+            engine = new GameEngine();
+            engine.setOnAction(Main.this);
+            engine.setFps(120);
+            engine.start();
+            load.setVisible(false);
+            newGame.setVisible(false);
+        });
+    }
+
+    private void handleGameFromSave() {
+        engine = new GameEngine();
+        engine.setOnAction(this);
+        engine.setFps(120);
+        engine.start();
+        loadFromSave = false;
+    }
+
+    private void move(final int direction) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                int sleepTime = 4;
+                for (int i = 0; i < 30; i++) {
+                    if (xBreak == (sceneWidth - breakWidth) && direction == RIGHT) {
+                        return;
+                    }
+                    if (xBreak == 0 && direction == LEFT) {
+                        return;
+                    }
+                    if (direction == RIGHT) {
+                        xBreak++;
+                    } else {
+                        xBreak--;
+                    }
+                    centerBreakX = xBreak + halfBreakWidth;
+                    try {
+                        Thread.sleep(sleepTime);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (i >= 20) {
+                        sleepTime = i;
+                    }
+                }
+            }
+        }).start();
+
+
+    }
+
+    //GameSave
     private void saveGame() {
         new Thread(new Runnable() {
             @Override
@@ -570,180 +776,5 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
 
     }
 
-    private void nextLevel() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    vX = 1.000;
 
-                    engine.stop();
-                    resetCollideFlags();
-                    goDownBall = true;
-
-                    isGoldStatus = false;
-                    isExistHeartBlock = false;
-
-
-                    hitTime = 0;
-                    time = 0;
-                    goldTime = 0;
-
-                    engine.stop();
-                    blocks.clear();
-                    chocos.clear();
-                    destroyedBlockCount = 0;
-                    start(primaryStage);
-
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-    }
-
-    public void restartGame() {
-
-        try {
-            level = 0;
-            heart = 3;
-            score = 0;
-            vX = 1.000;
-            destroyedBlockCount = 0;
-            resetCollideFlags();
-            goDownBall = true;
-
-            isGoldStatus = false;
-            isExistHeartBlock = false;
-            hitTime = 0;
-            time = 0;
-            goldTime = 0;
-
-            blocks.clear();
-            chocos.clear();
-
-            start(primaryStage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
-    public void onUpdate() {
-        Platform.runLater(new Runnable() {
-            @Override
-            public void run() {
-
-                scoreLabel.setText("Score: " + score);
-                heartLabel.setText("Heart : " + heart);
-
-                rect.setX(xBreak);
-                rect.setY(yBreak);
-                ball.setCenterX(xBall);
-                ball.setCenterY(yBall);
-
-                for (Bonus choco : chocos) {
-                    choco.choco.setY(choco.y);
-                }
-            }
-        });
-
-
-        if (yBall >= Block.getPaddingTop() && yBall <= (Block.getHeight() * (level + 1)) + Block.getPaddingTop()) {
-            for (final Block block : blocks) {
-                int hitCode = block.checkHitToBlock(xBall, yBall);
-                if (hitCode != Block.NO_HIT) {
-                    score += 1;
-
-                    new Score().show(block.x, block.y, 1, this);
-
-                    block.rect.setVisible(false);
-                    block.isDestroyed = true;
-                    destroyedBlockCount++;
-                    //System.out.println("size is " + blocks.size());
-                    resetCollideFlags();
-
-                    if (block.type == Block.BLOCK_CHOCO) {
-                        final Bonus choco = new Bonus(block.row, block.column);
-                        choco.timeCreated = time;
-                        Platform.runLater(new Runnable() {
-                            @Override
-                            public void run() {
-                                root.getChildren().add(choco.choco);
-                            }
-                        });
-                        chocos.add(choco);
-                    }
-
-                    if (block.type == Block.BLOCK_STAR) {
-                        goldTime = time;
-                        ball.setFill(new ImagePattern(new Image("goldball.png")));
-                        System.out.println("gold ball");
-                        root.getStyleClass().add("goldRoot");
-                        isGoldStatus = true;
-                    }
-
-                    if (block.type == Block.BLOCK_HEART) {
-                        heart++;
-                    }
-
-                    if (hitCode == Block.HIT_RIGHT) {
-                        collideToRightBlock = true;
-                    } else if (hitCode == Block.HIT_BOTTOM) {
-                        collideToBottomBlock = true;
-                    } else if (hitCode == Block.HIT_LEFT) {
-                        collideToLeftBlock = true;
-                    } else if (hitCode == Block.HIT_TOP) {
-                        collideToTopBlock = true;
-                    }
-
-                }
-
-                //TODO hit to break and some work here....
-                //System.out.println("Break in row:" + block.row + " and column:" + block.column + " hit");
-            }
-        }
-    }
-
-
-    public void onInit() {
-
-    }
-
-
-    public void onPhysicsUpdate() {
-        checkDestroyedCount();
-        setPhysicsToBall();
-
-
-        if (time - goldTime > 5000) {
-            ball.setFill(new ImagePattern(new Image("ball.png")));
-            root.getStyleClass().remove("goldRoot");
-            isGoldStatus = false;
-        }
-
-        for (Bonus choco : chocos) {
-            if (choco.y > sceneHeight || choco.taken) {
-                continue;
-            }
-            if (choco.y >= yBreak && choco.y <= yBreak + breakHeight && choco.x >= xBreak && choco.x <= xBreak + breakWidth) {
-                System.out.println("You Got it and +3 score for you");
-                choco.taken = true;
-                choco.choco.setVisible(false);
-                score += 3;
-                new Score().show(choco.x, choco.y, 3, this);
-            }
-            choco.y += ((time - choco.timeCreated) / 1000.000) + 1.000;
-        }
-
-        //System.out.println("time is:" + time + " goldTime is " + goldTime);
-
-    }
-
-
-
-    public void onTime(long time) {
-        this.time = time;
-    }
 }
