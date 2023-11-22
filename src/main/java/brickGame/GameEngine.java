@@ -13,6 +13,7 @@ public class GameEngine {
 
     private OnAction onAction;
     private int fps = 60;
+
     private Thread gameThread;
     private long time = 0;
     private volatile boolean running = false;

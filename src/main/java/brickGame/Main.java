@@ -361,7 +361,6 @@ public class Main extends Application implements EventHandler<KeyEvent>, GameEng
     }
 
 
-
     private void nextLevel() {
         Platform.runLater(new Runnable() {
             @Override
