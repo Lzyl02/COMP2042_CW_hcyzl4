@@ -42,6 +42,18 @@ public class Block implements Serializable {
     public static int BLOCK_HEART = 102;
 
 
+    public int getX() {
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public Color getColors() {
+        return color;
+    }
+
     public Block(int row, int column, Color color, int type) {
         this.row = row;
         this.column = column;

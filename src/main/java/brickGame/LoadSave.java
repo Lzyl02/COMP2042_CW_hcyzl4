@@ -34,52 +34,52 @@ public class LoadSave {
     public ArrayList<BlockSerializable> blocks = new ArrayList<BlockSerializable>();
 
 
-    public void read() {
-
-
-        try {
-            ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(new File(Main.savePath)));
-
-
-            level = inputStream.readInt();
-            score = inputStream.readInt();
-            heart = inputStream.readInt();
-            destroyedBlockCount = inputStream.readInt();
-
-
-            xBall = inputStream.readDouble();
-            yBall = inputStream.readDouble();
-            xBreak = inputStream.readDouble();
-            yBreak = inputStream.readDouble();
-            centerBreakX = inputStream.readDouble();
-            time = inputStream.readLong();
-            goldTime = inputStream.readLong();
-            vX = inputStream.readDouble();
-
-
-            isExistHeartBlock = inputStream.readBoolean();
-            isGoldStatus = inputStream.readBoolean();
-            goDownBall = inputStream.readBoolean();
-            goRightBall = inputStream.readBoolean();
-            collideToBreak = inputStream.readBoolean();
-            collideToBreakAndMoveToRight = inputStream.readBoolean();
-            collideToRightWall = inputStream.readBoolean();
-            collideToLeftWall = inputStream.readBoolean();
-            collideToRightBlock = inputStream.readBoolean();
-            collideToBottomBlock = inputStream.readBoolean();
-            collideToLeftBlock = inputStream.readBoolean();
-            collideToTopBlock = inputStream.readBoolean();
-
-
-            try {
-                blocks = (ArrayList<BlockSerializable>) inputStream.readObject();
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }
+//    public void read() {
+//
+//
+//        try {
+//            ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(new File(Main.savePath)));
+//
+//
+//            level = inputStream.readInt();
+//            score = inputStream.readInt();
+//            heart = inputStream.readInt();
+//            destroyedBlockCount = inputStream.readInt();
+//
+//
+//            xBall = inputStream.readDouble();
+//            yBall = inputStream.readDouble();
+//            xBreak = inputStream.readDouble();
+//            yBreak = inputStream.readDouble();
+//            centerBreakX = inputStream.readDouble();
+//            time = inputStream.readLong();
+//            goldTime = inputStream.readLong();
+//            vX = inputStream.readDouble();
+//
+//
+//            isExistHeartBlock = inputStream.readBoolean();
+//            isGoldStatus = inputStream.readBoolean();
+//            goDownBall = inputStream.readBoolean();
+//            goRightBall = inputStream.readBoolean();
+//            collideToBreak = inputStream.readBoolean();
+//            collideToBreakAndMoveToRight = inputStream.readBoolean();
+//            collideToRightWall = inputStream.readBoolean();
+//            collideToLeftWall = inputStream.readBoolean();
+//            collideToRightBlock = inputStream.readBoolean();
+//            collideToBottomBlock = inputStream.readBoolean();
+//            collideToLeftBlock = inputStream.readBoolean();
+//            collideToTopBlock = inputStream.readBoolean();
+//
+//
+//            try {
+//                blocks = (ArrayList<BlockSerializable>) inputStream.readObject();
+//            } catch (ClassNotFoundException e) {
+//                e.printStackTrace();
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
 }

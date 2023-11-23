@@ -1,12 +1,9 @@
 package brickGame;
 
-import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
@@ -19,12 +16,12 @@ public class GameModel {
 
     // 游戏状态变量
     private int level = 0;
-    private double xBreak = 0.0f;
+    private double PaddleX = 0.0f;
     private double centerBreakX;
-    private double yBreak = 640.0f;
-    private int breakWidth = 130;
-    private int breakHeight = 30;
-    private int halfBreakWidth = breakWidth / 2;
+    private double PaddleY = 640.0f;
+    private int PaddleWidth = 130;
+    private int PaddleHeight = 30;
+    private int halfBreakWidth = PaddleWidth / 2;
     public int sceneWidth = 500;
     public int sceneHeight = 700;
     private static int LEFT = 1;
@@ -32,10 +29,15 @@ public class GameModel {
 
     // 游戏元素
     private Circle ball;
-    private double xBall;
-    private double yBall;
+    private double BallX;
+    private double BallY;
     private Rectangle rect;
-    private int ballRadius = 10;
+
+    public int getBallRadius() {
+        return BallRadius;
+    }
+
+    private int BallRadius = 10;
     private int heart = 3;
     private int score = 0;
     private long time = 0;
@@ -53,10 +55,14 @@ public class GameModel {
     public static String savePath = "D:/save/save.mdds";
     public static String savePathDir = "D:/save/";
 
+    public ArrayList<Block> getBlocks() {
+        return Blocks;
+    }
+
     // 游戏元素列表
-    private ArrayList<Block> blocks = new ArrayList<Block>();
+    private ArrayList<Block> Blocks = new ArrayList<Block>();
     private ArrayList<Bonus> chocos = new ArrayList<Bonus>();
-    private Color[] colors = new Color[] {
+    private Color[] Colors = new Color[] {
             Color.MAGENTA,
             Color.RED,
             Color.GOLD,
@@ -100,18 +106,63 @@ public class GameModel {
     private double vX = 1.000;
     private double vY = 1.000;
 
+    Score scoreDisplay = new Score();
 
+    
+    public int getSceneWidth() {
+        return sceneWidth;
+    }
+
+    public int getSceneHeight() {
+        return sceneHeight;
+    }
+
+    public double getPaddleX() {
+        return PaddleX;
+    }
+
+    public double getPaddleY() {
+        return PaddleY;
+    }
+
+    public int getPaddleWidth() {
+        return PaddleWidth;
+    }
+
+    public int getPaddleHeight() {
+        return PaddleHeight;
+    }
+
+    public double getBallX() {
+        return BallX;
+    }
+
+    public double getBallY() {
+        return BallY;
+    }
 
     private void initBall() {
         Random random = new Random();
         // 初始化球的位置
-        xBall = random.nextInt(sceneWidth) + 1;
-        yBall = random.nextInt(sceneHeight - 200) + ((level + 1) * Block.getHeight()) + 15;
+        BallX = random.nextInt(sceneWidth) + 1;
+        BallY = random.nextInt(sceneHeight - 200) + ((level + 1) * Block.getHeight()) + 15;
 
         // 初始化球的其他属性，如速度和方向（如果游戏中需要）
         // 例如：
         // velocityX = initialVelocityX;
         // velocityY = initialVelocityY;
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public int getHeart() {
+        return heart;
+    }
+
+    public int getScore() {
+        return score;
     }
 
     private void initBoard() {
@@ -136,7 +187,7 @@ public class GameModel {
                 } else {
                     type = Block.BLOCK_NORMAL;
                 }
-                blocks.add(new Block(j, i, colors[r % (colors.length)], type));
+                Blocks.add(new Block(j, i, Colors[r % (Colors.length)], type));
                 //System.out.println("colors " + r % (colors.length));
             }
         }
@@ -177,37 +228,43 @@ public class GameModel {
         goldTime = 0;
 
         // 清除可能存在的上一局游戏的残留状态
-        blocks.clear();
+        Blocks.clear();
         chocos.clear();
+    }
+    public void updateScore(int scoreDelta) {
+        // 更新分数逻辑
+        this.score += scoreDelta;
+        // 可能还需要通知视图进行更新
     }
 
     private void setPhysicsToBall() {
         //v = ((time - hitTime) / 1000.000) + 1.000;
 
         if (goDownBall) {
-            yBall += vY;
+            BallY += vY;
         } else {
-            yBall -= vY;
+            BallY -= vY;
         }
 
         if (goRightBall) {
-            xBall += vX;
+            BallX += vX;
         } else {
-            xBall -= vX;
+            BallX -= vX;
         }
 
-        if (yBall <= 0) {
+        if (BallY <= 0) {
             //vX = 1.000;
             resetCollideFlags();
             goDownBall = true;
             return;
         }
-        if (yBall >= sceneHeight) {
+        if (BallY >= sceneHeight) {
             goDownBall = false;
             if (!isGoldStatus) {
                 //TODO gameover
                 heart--;
-                new Score().show(sceneWidth / 2, sceneHeight / 2, -1, this);
+                GameView view;
+                scoreDisplay.show(sceneWidth / 2, sceneHeight / 2, -1, view.getRootPane()); // 使用 GameView 的根 Pane
 
                 if (heart == 0) {
                     new Score().showGameOver(this);
@@ -218,15 +275,15 @@ public class GameModel {
             //return;
         }
 
-        if (yBall >= yBreak - ballRadius) {
+        if (BallY >= PaddleY - BallRadius) {
             //System.out.println("Colide1");
-            if (xBall >= xBreak && xBall <= xBreak + breakWidth) {
+            if (BallX >= PaddleX && BallX <= PaddleX + PaddleWidth) {
                 hitTime = time;
                 resetCollideFlags();
                 collideToBreak = true;
                 goDownBall = false;
 
-                double relation = (xBall - centerBreakX) / (breakWidth / 2);
+                double relation = (BallX - centerBreakX) / (PaddleWidth / 2);
 
                 if (Math.abs(relation) <= 0.3) {
                     //vX = 0;
@@ -239,7 +296,7 @@ public class GameModel {
                     //System.out.println("vX " + vX);
                 }
 
-                if (xBall - centerBreakX > 0) {
+                if (BallX - centerBreakX > 0) {
                     collideToBreakAndMoveToRight = true;
                 } else {
                     collideToBreakAndMoveToRight = false;
@@ -248,13 +305,13 @@ public class GameModel {
             }
         }
 
-        if (xBall >= sceneWidth) {
+        if (BallX >= sceneWidth) {
             resetCollideFlags();
             //vX = 1.000;
             collideToRightWall = true;
         }
 
-        if (xBall <= 0) {
+        if (BallX <= 0) {
             resetCollideFlags();
             //vX = 1.000;
             collideToLeftWall = true;
@@ -315,7 +372,7 @@ public class GameModel {
         destroyedBlockCount = 0;
 
         // 清除当前级别的方块和奖励
-        blocks.clear();
+        Blocks.clear();
         chocos.clear();
 
         // 初始化新级别的方块
@@ -325,7 +382,7 @@ public class GameModel {
     }
 
     private void checkDestroyedCount() {
-        if (destroyedBlockCount == blocks.size()) {
+        if (destroyedBlockCount == Blocks.size()) {
             //TODO win level todo...
             //System.out.println("You Win");
 
@@ -347,7 +404,7 @@ public class GameModel {
         time = 0;
         goldTime = 0;
 
-        blocks.clear();
+        Blocks.clear();
         chocos.clear();
 
         initBoard();  // 重新初始化游戏板块
@@ -355,9 +412,9 @@ public class GameModel {
 
 
     public void onUpdate() {
-        if (yBall >= Block.getPaddingTop() && yBall <= (Block.getHeight() * (level + 1)) + Block.getPaddingTop()) {
-            for (Block block : blocks) {
-                int hitCode = block.checkHitToBlock(xBall, yBall);
+        if (BallY >= Block.getPaddingTop() && BallY <= (Block.getHeight() * (level + 1)) + Block.getPaddingTop()) {
+            for (Block block : Blocks) {
+                int hitCode = block.checkHitToBlock(BallX, BallY);
                 if (hitCode != Block.NO_HIT && !block.isDestroyed) {
                     handleBlockCollision(block, hitCode);
                 }
@@ -365,7 +422,12 @@ public class GameModel {
         }
         // ... 其他游戏逻辑 ...
     }
+    public void onInit() {
 
+    }
+    public void onTime(long time) {
+        this.time = time;
+    }
     private void handleBlockCollision(Block block, int hitCode) {
         score += 1; // 示例：增加分数
         block.isDestroyed = true;
@@ -387,7 +449,7 @@ public class GameModel {
             if (choco.y > sceneHeight || choco.taken) {
                 continue;
             }
-            if (choco.y >= yBreak && choco.y <= yBreak + breakHeight && choco.x >= xBreak && choco.x <= xBreak + breakWidth) {
+            if (choco.y >= PaddleY && choco.y <= PaddleY + PaddleHeight && choco.x >= PaddleX && choco.x <= PaddleX + PaddleWidth) {
                 choco.taken = true;
                 score += 3; // 更新分数
             }
@@ -397,4 +459,6 @@ public class GameModel {
 
         // ... 其他物理更新逻辑 ...
     }
+
+
 }

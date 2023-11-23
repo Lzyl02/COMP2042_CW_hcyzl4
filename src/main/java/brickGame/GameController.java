@@ -16,10 +16,16 @@ import javafx.stage.Stage;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Random;
+import javafx.scene.input.KeyEvent;
 
 import static javafx.application.Application.launch;
 
-public class GameController extends Application {
+
+public class GameController {
+    private GameModel model;
+    private GameView view;
+    private GameEngine engine;
+
 
     private int level = 0;
     private double xBreak = 0.0f;
@@ -85,7 +91,6 @@ public class GameController extends Application {
     private Button newGame = null;
 
     // 游戏引擎
-    private GameEngine engine;
 
 
     //ball
@@ -102,37 +107,11 @@ public class GameController extends Application {
 
     private double vX = 1.000;
     private double vY = 1.000;
-
-
-
-    private GameModel model;
-    private GameView view;
-    // ... 其他成员变量 ...
-
-    public static void main(String[] args) {
-        launch(args);
+    public GameController(GameModel model, GameView view) {
+        this.model = model;
+        this.view = view;
+        setupGameEngine();
     }
-
-    @Override
-    public void start(Stage primaryStage) throws Exception {
-        model = new GameModel();
-        view = new GameView(primaryStage, model);
-
-        // 初始化游戏模型
-        model.initializeGameState();
-
-        // 初始化游戏视图，创建和设置游戏界面元素
-        view.initializeGameView();
-
-        // 配置并处理游戏相关的用户输入事件，如键盘和鼠标事件
-        setupEventHandlers(primaryStage);
-
-        // 展示游戏界面
-        primaryStage.setTitle("Your Game Title");
-        primaryStage.setScene(view.getScene());
-        primaryStage.show();
-    }
-
 
     private void setupGame() {
         // 初始化游戏状态和界面
@@ -180,74 +159,74 @@ public class GameController extends Application {
 
     }
 
-    private void saveGame() {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                new File(savePathDir).mkdirs();
-                File file = new File(savePath);
-                ObjectOutputStream outputStream = null;
-                try {
-                    outputStream = new ObjectOutputStream(new FileOutputStream(file));
-
-                    outputStream.writeInt(level);
-                    outputStream.writeInt(score);
-                    outputStream.writeInt(heart);
-                    outputStream.writeInt(destroyedBlockCount);
-
-
-                    outputStream.writeDouble(xBall);
-                    outputStream.writeDouble(yBall);
-                    outputStream.writeDouble(xBreak);
-                    outputStream.writeDouble(yBreak);
-                    outputStream.writeDouble(centerBreakX);
-                    outputStream.writeLong(time);
-                    outputStream.writeLong(goldTime);
-                    outputStream.writeDouble(vX);
-
-
-                    outputStream.writeBoolean(isExistHeartBlock);
-                    outputStream.writeBoolean(isGoldStatus);
-                    outputStream.writeBoolean(goDownBall);
-                    outputStream.writeBoolean(goRightBall);
-                    outputStream.writeBoolean(collideToBreak);
-                    outputStream.writeBoolean(collideToBreakAndMoveToRight);
-                    outputStream.writeBoolean(collideToRightWall);
-                    outputStream.writeBoolean(collideToLeftWall);
-                    outputStream.writeBoolean(collideToRightBlock);
-                    outputStream.writeBoolean(collideToBottomBlock);
-                    outputStream.writeBoolean(collideToLeftBlock);
-                    outputStream.writeBoolean(collideToTopBlock);
-
-                    ArrayList<BlockSerializable> blockSerializables = new ArrayList<BlockSerializable>();
-                    for (Block block : blocks) {
-                        if (block.isDestroyed) {
-                            continue;
-                        }
-                        blockSerializables.add(new BlockSerializable(block.row, block.column, block.type));
-                    }
-
-                    outputStream.writeObject(blockSerializables);
-
-                    new Score().showMessage("Game Saved", Main.this);
-
-
-                } catch (FileNotFoundException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    try {
-                        outputStream.flush();
-                        outputStream.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }).start();
-
-    }
+//    private void saveGame() {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                new File(savePathDir).mkdirs();
+//                File file = new File(savePath);
+//                ObjectOutputStream outputStream = null;
+//                try {
+//                    outputStream = new ObjectOutputStream(new FileOutputStream(file));
+//
+//                    outputStream.writeInt(level);
+//                    outputStream.writeInt(score);
+//                    outputStream.writeInt(heart);
+//                    outputStream.writeInt(destroyedBlockCount);
+//
+//
+//                    outputStream.writeDouble(xBall);
+//                    outputStream.writeDouble(yBall);
+//                    outputStream.writeDouble(xBreak);
+//                    outputStream.writeDouble(yBreak);
+//                    outputStream.writeDouble(centerBreakX);
+//                    outputStream.writeLong(time);
+//                    outputStream.writeLong(goldTime);
+//                    outputStream.writeDouble(vX);
+//
+//
+//                    outputStream.writeBoolean(isExistHeartBlock);
+//                    outputStream.writeBoolean(isGoldStatus);
+//                    outputStream.writeBoolean(goDownBall);
+//                    outputStream.writeBoolean(goRightBall);
+//                    outputStream.writeBoolean(collideToBreak);
+//                    outputStream.writeBoolean(collideToBreakAndMoveToRight);
+//                    outputStream.writeBoolean(collideToRightWall);
+//                    outputStream.writeBoolean(collideToLeftWall);
+//                    outputStream.writeBoolean(collideToRightBlock);
+//                    outputStream.writeBoolean(collideToBottomBlock);
+//                    outputStream.writeBoolean(collideToLeftBlock);
+//                    outputStream.writeBoolean(collideToTopBlock);
+//
+//                    ArrayList<BlockSerializable> blockSerializables = new ArrayList<BlockSerializable>();
+//                    for (Block block : blocks) {
+//                        if (block.isDestroyed) {
+//                            continue;
+//                        }
+//                        blockSerializables.add(new BlockSerializable(block.row, block.column, block.type));
+//                    }
+//
+//                    outputStream.writeObject(blockSerializables);
+//
+//                    new Score().showMessage("Game Saved", Main.this);
+//
+//
+//                } catch (FileNotFoundException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                } finally {
+//                    try {
+//                        outputStream.flush();
+//                        outputStream.close();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }).start();
+//
+//    }
 
     public void handle(KeyEvent event) {
         switch (event.getCode()) {
@@ -262,7 +241,7 @@ public class GameController extends Application {
                 //setPhysicsToBall();
                 break;
             case S:
-                saveGame();
+//                saveGame();
                 break;
         }
 
@@ -277,76 +256,80 @@ public class GameController extends Application {
 
     private void setupGameEngine() {
         engine = new GameEngine();
-        engine.setOnAction(this);
+        engine.setOnAction(new GameEngine.OnAction() {
+            @Override
+            public void onUpdate() {
+                GameController.this.onUpdate();
+            }
+
+            @Override
+            public void onPhysicsUpdate() {
+                GameController.this.onPhysicsUpdate();
+            }
+
+            @Override
+            public void onTime(long time) {
+                GameController.this.onTime(time);
+            }
+
+            @Override
+            public void onInit() {
+                GameController.this.onInit();
+            }
+        });
         engine.setFps(120);
         engine.start();
     }
 
-    private void loadGame() {
-
-        LoadSave loadSave = new LoadSave();
-        loadSave.read();
-
-
-        isExistHeartBlock = loadSave.isExistHeartBlock;
-        isGoldStatus = loadSave.isGoldStatus;
-        goDownBall = loadSave.goDownBall;
-        goRightBall = loadSave.goRightBall;
-        collideToBreak = loadSave.collideToBreak;
-        collideToBreakAndMoveToRight = loadSave.collideToBreakAndMoveToRight;
-        collideToRightWall = loadSave.collideToRightWall;
-        collideToLeftWall = loadSave.collideToLeftWall;
-        collideToRightBlock = loadSave.collideToRightBlock;
-        collideToBottomBlock = loadSave.collideToBottomBlock;
-        collideToLeftBlock = loadSave.collideToLeftBlock;
-        collideToTopBlock = loadSave.collideToTopBlock;
-        level = loadSave.level;
-        score = loadSave.score;
-        heart = loadSave.heart;
-        destroyedBlockCount = loadSave.destroyedBlockCount;
-        xBall = loadSave.xBall;
-        yBall = loadSave.yBall;
-        xBreak = loadSave.xBreak;
-        yBreak = loadSave.yBreak;
-        centerBreakX = loadSave.centerBreakX;
-        time = loadSave.time;
-        goldTime = loadSave.goldTime;
-        vX = loadSave.vX;
-
-        blocks.clear();
-        chocos.clear();
-
-        for (BlockSerializable ser : loadSave.blocks) {
-            int r = new Random().nextInt(200);
-            blocks.add(new Block(ser.row, ser.j, colors[r % colors.length], ser.type));
-        }
-
-
-        try {
-            loadFromSave = true;
-            start(primaryStage);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-
-    }
-    private void setupButtonActions() {
-        load.setOnAction(event -> {
-            loadGame();
-            load.setVisible(false);
-            newGame.setVisible(false);
-        });
-
-        newGame.setOnAction(event -> {
-            engine = new GameEngine();
-            engine.setOnAction(Main.this);
-            engine.setFps(120);
-            engine.start();
-            load.setVisible(false);
-            newGame.setVisible(false);
-        });
-    }
+//    private void loadGame() {
+//
+//        LoadSave loadSave = new LoadSave();
+//        loadSave.read();
+//
+//
+//        isExistHeartBlock = loadSave.isExistHeartBlock;
+//        isGoldStatus = loadSave.isGoldStatus;
+//        goDownBall = loadSave.goDownBall;
+//        goRightBall = loadSave.goRightBall;
+//        collideToBreak = loadSave.collideToBreak;
+//        collideToBreakAndMoveToRight = loadSave.collideToBreakAndMoveToRight;
+//        collideToRightWall = loadSave.collideToRightWall;
+//        collideToLeftWall = loadSave.collideToLeftWall;
+//        collideToRightBlock = loadSave.collideToRightBlock;
+//        collideToBottomBlock = loadSave.collideToBottomBlock;
+//        collideToLeftBlock = loadSave.collideToLeftBlock;
+//        collideToTopBlock = loadSave.collideToTopBlock;
+//        level = loadSave.level;
+//        score = loadSave.score;
+//        heart = loadSave.heart;
+//        destroyedBlockCount = loadSave.destroyedBlockCount;
+//        xBall = loadSave.xBall;
+//        yBall = loadSave.yBall;
+//        xBreak = loadSave.xBreak;
+//        yBreak = loadSave.yBreak;
+//        centerBreakX = loadSave.centerBreakX;
+//        time = loadSave.time;
+//        goldTime = loadSave.goldTime;
+//        vX = loadSave.vX;
+//
+//        blocks.clear();
+//        chocos.clear();
+//
+//        for (BlockSerializable ser : loadSave.blocks) {
+//            int r = new Random().nextInt(200);
+//            blocks.add(new Block(ser.row, ser.j, colors[r % colors.length], ser.type));
+//        }
+//
+//
+//        try {
+//            loadFromSave = true;
+//            start(primaryStage);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//
+//    }
 
     private void handleGameStartActions() {
         if (level > 1 && level < 18) {
@@ -359,14 +342,34 @@ public class GameController extends Application {
 
     private void setupButtonActions() {
         load.setOnAction(event -> {
-            loadGame();
+//            loadGame();
             load.setVisible(false);
             newGame.setVisible(false);
         });
 
         newGame.setOnAction(event -> {
             engine = new GameEngine();
-            engine.setOnAction(Main.this);
+            engine.setOnAction(new GameEngine.OnAction() {
+                @Override
+                public void onUpdate() {
+                    GameController.this.onUpdate();
+                }
+
+                @Override
+                public void onPhysicsUpdate() {
+                    GameController.this.onPhysicsUpdate();
+                }
+
+                @Override
+                public void onTime(long time) {
+                    GameController.this.onTime(time);
+                }
+
+                @Override
+                public void onInit() {
+                    GameController.this.onInit();
+                }
+            });
             engine.setFps(120);
             engine.start();
             load.setVisible(false);
@@ -374,15 +377,50 @@ public class GameController extends Application {
         });
     }
 
-    private void handleGameFromSave() {
-        engine = new GameEngine();
-        engine.setOnAction(this);
-        engine.setFps(120);
-        engine.start();
-        loadFromSave = false;
-    }
+//    private void handleGameFromSave() {
+//        engine = new GameEngine();
+//        engine.setOnAction(this);
+//        engine.setFps(120);
+//        engine.start();
+//        loadFromSave = false;
+//    }
     // 更新视图
-        view.updateView();
+
+    // Delegate methods to model
+    private void onUpdate() {
+        model.onUpdate();
+        view.updateView(); // 在模型更新后调用视图更新
+
+        // Update view if necessary
+    }
+
+    public Color[] getcolors() {
+        return colors;
+    }
+
+    private void onPhysicsUpdate() {
+        model.onPhysicsUpdate();
+        view.updateView(); // 在模型更新后调用视图更新
+
+        // Update view if necessary
+    }
+
+    private void onTime(long time) {
+        model.onTime(time);
+        view.updateView(); // 在模型更新后调用视图更新
+
+        // Update view if necessary
+    }
+
+    private void onInit() {
+        model.onInit();
+        view.updateView(); // 在模型更新后调用视图更新
+
+        // Update view if necessary
+    }
+
+
+
 }
 
 

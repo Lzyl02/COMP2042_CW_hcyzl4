@@ -5,16 +5,17 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 //import sun.plugin2.message.Message;
 
 public class Score {
-    public void show(final double x, final double y, int score, final Main main) {
+    public void show(final double x, final double y, int score, Pane pane) {
         String sign = (score >= 0) ? "+" : "";
         final Label label = new Label(sign + score);
         label.setTranslateX(x);
         label.setTranslateY(y);
 
-        Platform.runLater(() -> main.root.getChildren().add(label));
+        Platform.runLater(() -> pane.getChildren().add(label));
 
         new Thread(() -> {
             try {
@@ -27,14 +28,12 @@ public class Score {
                     });
                     Thread.sleep(15);
                 }
-                // Remove the label after the animation
-                Platform.runLater(() -> main.root.getChildren().remove(label));
+                Platform.runLater(() -> pane.getChildren().remove(label));
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }
         }).start();
     }
-
     public void showMessage(String message, final Main main) {
         final Label label = new Label(message);
         label.setTranslateX(220);
