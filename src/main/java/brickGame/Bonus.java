@@ -6,12 +6,11 @@ import javafx.scene.shape.Rectangle;
 
 import java.io.Serializable;
 import java.util.Random;
-
 public class Bonus implements Serializable {
     public Rectangle choco;
-
-    public double x;
-    public double y;
+    private double x;
+    double y;
+    int fallingSpeed = 1;
     public long timeCreated;
     public boolean taken = false;
 
@@ -20,6 +19,8 @@ public class Bonus implements Serializable {
         y = (row * (Block.getHeight())) + Block.getPaddingTop() + (Block.getHeight() / 2) - 15;
 
         draw();
+        System.out.println("Bonus created at: Row = " + row + ", Column = " + column + ", x = " + x + ", y = " + y);
+
     }
 
     private void draw() {
@@ -29,16 +30,33 @@ public class Bonus implements Serializable {
         choco.setX(x);
         choco.setY(y);
 
-        String url;
-        if (new Random().nextInt(20) % 2 == 0) {
-            url = "bonus1.png";
-        } else {
-            url = "bonus2.png";
-        }
-
+        String url = new Random().nextInt(20) % 2 == 0 ? "bonus1.png" : "bonus2.png";
         choco.setFill(new ImagePattern(new Image(url)));
     }
 
+
+    public Rectangle getRectangle() {
+        return choco;
+    }
+    public double getY() {
+        return y;
+    }
+
+    public void fallDown() {
+        this.y += fallingSpeed; // Define fallingSpeed as needed
+    }
+
+    public boolean isTaken() {
+        return taken;
+    }
+
+    public void setTaken(boolean taken) {
+        this.taken = taken;
+    }
+
+    public double getX() {
+        return x;
+    }
 
 
 }

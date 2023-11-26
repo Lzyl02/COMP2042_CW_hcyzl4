@@ -1,77 +1,149 @@
 package brickGame;
 
-import javafx.application.Platform;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class GameEngine {
 
+    private OnAction onAction;
+    private volatile int fps = 15;
+    private boolean isStopped = true;
+    private ExecutorService executorService;
+    private long time = 0;
+    private boolean isRunning;
+
+    public boolean isRunning() {
+        return isRunning;
+    }
     public interface OnAction {
         void onUpdate();
+        void onInit();
         void onPhysicsUpdate();
         void onTime(long time);
-        void onInit();
     }
 
-    private OnAction onAction;
-    private int fps = 60;
-
-    private Thread gameThread;
-    private long time = 0;
-    private volatile boolean running = false;
-
     public void setOnAction(OnAction onAction) {
+        System.out.println("OnAction set in GameEngine.");
+
         this.onAction = onAction;
     }
 
     public void setFps(int fps) {
-        this.fps = fps;
-    }
-
-    private void initialize() {
-        // Ensure onInit is called on the JavaFX Application Thread
-        Platform.runLater(() -> onAction.onInit());
-    }
-
-    private void gameLoop() {
-        while (running) {
-            // Ensure onUpdate is called on the JavaFX Application Thread
-            Platform.runLater(() -> onAction.onUpdate());
-
-            // Ensure onPhysicsUpdate is called on the JavaFX Application Thread
-            Platform.runLater(() -> onAction.onPhysicsUpdate());
-
-            // Ensure onTime is called on the JavaFX Application Thread
-            Platform.runLater(() -> onAction.onTime(time));
-
-            time++;
-
-            try {
-                Thread.sleep(1000L / fps);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Restore the interrupted status
-                break; // Exit the loop to stop the thread
-            }
-        }
+        this.fps = 1000 / fps;
+        System.out.println("FPS set to: " + this.fps + " ms per frame");
     }
 
     public void start() {
-        if (running) {
-            return; // The game is already running
-        }
-        running = true;
-        initialize();
-        gameThread = new Thread(this::gameLoop);
-        gameThread.start();
+        System.out.println("Game engine is starting...");
+
+        time = 0;
+        isStopped = false;
+        executorService = Executors.newFixedThreadPool(3);
+
+        executorService.submit(this::Initialize);
+        executorService.submit(this::Update);
+        executorService.submit(this::PhysicsCalculation);
+        executorService.submit(this::TimeStart);
+
+        System.out.println("Game engine started and threads initiated.");
     }
 
     public void stop() {
-        running = false;
-        if (gameThread != null) {
-            gameThread.interrupt();
+        System.out.println("Stopping game engine...");
+
+        if (!isStopped) {
+            isStopped = true;
+            executorService.shutdown();
             try {
-                gameThread.join(); // Wait for the thread to finish
+                if (!executorService.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+                    executorService.shutdownNow();
+                }
             } catch (InterruptedException e) {
-                Thread.currentThread().interrupt(); // Restore the interrupted status
+                Thread.currentThread().interrupt();
+            }
+
+            System.out.println("Game engine stopped.");
+        }
+    }
+    public void stopAndWait() {
+        System.out.println("Stopping game engine and waiting for termination...");
+
+        if (!isStopped) {
+            isStopped = true;
+            executorService.shutdown();
+            try {
+                if (!executorService.awaitTermination(1, TimeUnit.SECONDS)) {
+                    executorService.shutdownNow();
+                }
+                System.out.println("Game engine stopped and all threads terminated.");
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.out.println("Interruption while stopping game engine.");
             }
         }
+    }
+    public void restart() {
+        stopAndWait(); // Ensure previous instance is stopped
+        start();       // Start a new instance
+    }
+    private void Initialize() {
+        System.out.println("Initializing game...");
+        onAction.onInit();
+        System.out.println("Initialization complete.");
+    }
+
+    private void Update() {
+        System.out.println("Update thread started.");
+        while (!isStopped) {
+            try {
+                onAction.onUpdate();
+                Thread.sleep(fps);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.out.println("Update thread interrupted.");
+                break;
+            }
+        }
+        System.out.println("Update thread ended.");
+    }
+
+    private void PhysicsCalculation() {
+        if (onAction == null) {
+            System.out.println("Error: onAction is null in GameEngine.");
+            return;
+        }
+        System.out.println("Physics calculation thread started.");
+        int physicsFps = 1000 / 60; // Example: Set this to 60 times per second
+        while (!isStopped) {
+            try {
+
+                onAction.onPhysicsUpdate();
+
+                Thread.sleep(physicsFps); // Sleep for shorter duration for more frequent checks
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.out.println("Physics calculation thread interrupted.");
+                break;
+            }
+        }
+        System.out.println("Physics calculation thread ended.");
+    }
+
+
+    private void TimeStart() {
+        System.out.println("Time tracking thread started.");
+        while (!isStopped) {
+            try {
+                time++;
+                onAction.onTime(time);
+                Thread.sleep(1);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                System.out.println("Time tracking thread interrupted.");
+                break;
+            }
+        }
+        System.out.println("Time tracking thread ended.");
     }
 }

@@ -1,71 +1,41 @@
 package brickGame;
 
-import brickGame.Block;
-import brickGame.Bonus;
-import brickGame.GameEngine;
-import javafx.application.Application;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
+import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Stage;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
-import javafx.scene.input.KeyEvent;
 
-import static javafx.application.Application.launch;
+import static brickGame.GameModel.level;
+import static brickGame.GameModel.score;
 
-
-public class GameController {
+public class GameController implements EventHandler<KeyEvent> {
+    private final GameEngine engine;
     private GameModel model;
-    private GameView view;
-    private GameEngine engine;
 
-
-    private int level = 0;
-    private double xBreak = 0.0f;
-    private double centerBreakX;
-    private double yBreak = 640.0f;
-    private int breakWidth = 130;
-    private int breakHeight = 30;
-    private int halfBreakWidth = breakWidth / 2;
-    public int sceneWidth = 500;
-    public int sceneHeight = 700;
-    private static int LEFT = 1;
-    private static int RIGHT = 2;
-
-    // 游戏元素
-    private Circle ball;
-    private double xBall;
-    private double yBall;
-    private Rectangle rect;
-    private int ballRadius = 10;
-    private int heart = 3;
-    private int score = 0;
-    private long time = 0;
-    private long hitTime = 0;
-    private long goldTime = 0;
-
-    // 游戏状态
-    private boolean isGoldStatus = false;
-    private boolean isExistHeartBlock = false;
-    private int destroyedBlockCount = 0;
-    private double v = 1.000;
-    private boolean loadFromSave = false;
-
-    // 存档路径
     public static String savePath = "D:/save/save.mdds";
     public static String savePathDir = "D:/save/";
 
-    // 游戏元素列表
-    private ArrayList<Block> blocks = new ArrayList<Block>();
-    private ArrayList<Bonus> chocos = new ArrayList<Bonus>();
-    private Color[] colors = new Color[] {
+    private int sceneWidth = 500;
+    private double updateInterval = 1000000000.0 / 240.0; // Adjust the frame rate (240 FPS in this example)
+    private long lastUpdateTime = 0;
+
+
+    private double centerPaddleX;
+    private double xBall;
+    private double yBall;
+
+    private static boolean isExistHeartBlock = false;
+    private ArrayList<Bonus> chocos;
+    // Define custom key release events
+
+    private static Color[] colors = new Color[]{
             Color.MAGENTA,
             Color.RED,
             Color.GOLD,
@@ -80,348 +50,399 @@ public class GameController {
             Color.TOMATO,
             Color.TAN,
     };
+    private GameView view;
+    private boolean movingLeft = false;
+    private boolean movingRight = false;
 
-    // 游戏界面
-    public Pane root;
-    private Label scoreLabel;
-    private Label heartLabel;
-    private Label levelLabel;
-    private Stage primaryStage;
-    private Button load = null;
-    private Button newGame = null;
-
-    // 游戏引擎
-
-
-    //ball
-    private boolean goDownBall                  = true;
-    private boolean goRightBall                 = true;
-    private boolean collideToBreak = false;
-    private boolean collideToBreakAndMoveToRight = true;
-    private boolean collideToRightWall = false;
-    private boolean collideToLeftWall = false;
-    private boolean collideToRightBlock = false;
-    private boolean collideToBottomBlock = false;
-    private boolean collideToLeftBlock = false;
-    private boolean collideToTopBlock = false;
-
-    private double vX = 1.000;
-    private double vY = 1.000;
-    public GameController(GameModel model, GameView view) {
-        this.model = model;
+    public GameController(GameView view) {
         this.view = view;
-        setupGameEngine();
+        this.engine = new GameEngine();
+
+        // Get the GameModel instance using the singleton pattern
+        this.model = GameModel.getInstance();
+
+        // Set this GameController instance in the model
+        this.model.setController(this);
+
+        // Set GameModel as the action handler for GameEngine
+        // Initialization...
+        this.chocos = new ArrayList<>();
     }
 
-    private void setupGame() {
-        // 初始化游戏状态和界面
+
+
+    public void startGame() {
+        try {
+
+            System.out.println("Starting game initialization...");
+            System.out.println("Current Level: " + level);
+            view.hideGameControlButtons();
+            // Initialize game state in the model
+            model.initializeGame();
+
+            // Initialize ball and paddle views based on the model state
+            view.initBallView(model.getxBall(), model.getyBall(), model.getBallRadius());
+            view.initBreakView(model.getxPaddle(), model.getyPaddle(), model.getPaddleWidth(), model.getPaddleHeight());
+
+            // Display blocks
+            System.out.println("Blocks to display: " + model.getBlocks().size());
+
+            view.displayBlocks();
+
+            // Ensure all UI updates have been processed before starting the game engine
+            Platform.runLater(() -> {
+                System.out.println("Game initialization completed.");
+                System.out.println("Starting game engine...");
+                this.engine.setOnAction(this.model);
+
+                // Start the game engine
+                engine.setFps(120);
+                engine.start();
+            });
+
+        } catch (Exception e) {
+            System.err.println("Error during game initialization: " + e.getMessage());
+            // Handle the error appropriately
+        }
+    }
+
+
+    @Override
+    public void handle(KeyEvent event) {
+        if (event.getEventType() == KeyEvent.KEY_RELEASED) {
+            switch (event.getCode()) {
+                case LEFT:
+                    stopPaddleLeft();
+                    break;
+                case RIGHT:
+                    stopPaddleRight();
+                    break;
+                // Handle other key releases, if necessary
+            }
+        } else if (event.getEventType() == KeyEvent.KEY_PRESSED) {
+            // Handle key presses (e.g., for moving the paddle)
+            switch (event.getCode()) {
+                case LEFT:
+                    moveLeft();
+                    break;
+                case RIGHT:
+                    moveRight();
+                    break;
+                case S:
+                    saveGame();
+                    break;
+
+                // Handle other key presses, if necessary
+            }
+        }
+    }
+
+
+    public void moveLeft() {
+        int moveAmount = 15;
+        if (model.getxPaddle() - moveAmount >= 0) {
+            double newXPosition = model.getxPaddle() - moveAmount;
+
+            model.setxPaddle(newXPosition);
+            centerPaddleX = model.getxPaddle() + model.getHalfPaddleWidth();
+            Platform.runLater(() -> view.updatePaddlePosition(model.getxPaddle(), model.getyPaddle()));
+        }
+
+
+    }
+
+    public void moveRight() {
+        int moveAmount = 15;
+        if (model.getxPaddle() + moveAmount <= (sceneWidth - model.getPaddleWidth())) {
+            double newXPosition = model.getxPaddle() + moveAmount;
+
+            model.setxPaddle(newXPosition);
+            centerPaddleX = model.getxPaddle() + model.getHalfPaddleWidth();
+            Platform.runLater(() -> view.updatePaddlePosition(model.getxPaddle(), model.getyPaddle()));
+        }
+
+    }
+
+
+    private void stopPaddleLeft() {
+        // Add your logic to stop the leftward movement of the paddle
+        // For example, set movingLeft to false if you use a boolean flag
+        movingLeft = false;
+    }
+
+    // Handle right paddle stop when the right arrow key is released
+    private void stopPaddleRight() {
+        // Add your logic to stop the rightward movement of the paddle
+        // For example, set movingRight to false if you use a boolean flag
+        movingRight = false;
+    }
+
+    public void updateScoreView(double x, double y, int score) {
+        view.showScoreLabel(x, y, score);
+    }
+
+    public void setView(GameView view) {
+        this.view = view;
+    }
+
+    void updateBallAppearance(boolean status) {
+        view.updateBallAppearance(status);
+    }
+
+    ;
+    // 更多控制器方法
+
+
+    void showGameOver() {
+        // Display the game over screen
+        view.showGameOver();
+    }
+
+
+    void changeBallAppearance(String appearance) {
+        // Change the appearance of the ball
+        view.changeBallAppearance(appearance);
+    }
+
+    void changeBallAppearanceNormal(String appearance) {
+        // Change the appearance of the ball
+        view.changeBallAppearance(appearance);
+    }
+
+    // Setters and Getters
+    public void setModel(GameModel model) {
+        this.model = model;
+    }
+
+    public GameModel getModel() {
+        return this.model;
+    }
+
+
+    void changeSceneStyleClass(String style) {
+        view.changeSceneStyleClass(style);
+    }
+
+    ;
+
+    public void updateUI() {
+        // Get the necessary state from the model
+        double xBall = model.getxBall();
+        double yBall = model.getyBall();
+        int score = GameModel.score;
+        int heart = model.getHeart();
+
+        // Update the view
+        Platform.runLater(() -> {
+            view.updateBallPosition(xBall, yBall);
+            view.updateScoreAndHeart(score, heart);
+            // Other UI updates...
+        });
+    }
+
+    public void handleBlockHit(Block block) {
+        if (block.isDestroyed) {
+            view.updateBlockVisibility(block, false);
+        }
     }
 
     public void nextLevel() {
-        model.nextLevel();  // 更新游戏逻辑状态
+        Platform.runLater(() -> {
+            try {
+                System.out.println("Preparing for next level...");
 
-        // 在 UI 上反映这些变化
-        view.updateForNextLevel();
+                // Check if the current level is 18 (win condition)
+                if (level == 18) {
+                    // Stop the game engine
+                    if (engine != null) {
+                        engine.stop();
+                    }
+                    // Show win message
+                    view.showWin();
+                    // Return early since the game is won
+                    return;
+                }
 
-        // 可能需要重新启动游戏引擎或更新场景
-        // ... UI 更新逻辑 ...
+                // Continue with next level preparation if level is not 18
+                updateBallAppearance(false);
+                model.prepareNextLevel();
+                view.updateLevelLabel(level);
+                System.out.println("Current Level: " + level);
+                System.out.println("Blocks to display: " + model.getBlocks().size());
+
+                view.displayBlocks();
+
+                System.out.println("Next level ready. Restarting game engine...");
+
+                // Restart the game engine for the next level
+                Platform.runLater(() -> {
+                    System.out.println("Game nextlevel completed.");
+                    System.out.println("newlevel game engine...");
+                    engine.restart();
+                });
+
+            } catch (Exception e) {
+                System.err.println("Error preparing next level: " + e.getMessage());
+            }
+        });
     }
-    private void move(final int direction) {
+
+
+    public void updateBonuses() {
+        for (Bonus bonus : model.getChocos()) {
+            if (!bonus.isTaken()) {
+                view.updateBonusPosition(bonus); // Reflect position update in the view
+            } else {
+                view.removeBonus(bonus); // Remove caught chocolate from UI
+            }
+        }
+    }
+
+    public void addChocoToView(Bonus choco) {
+        view.addBonus(choco.getRectangle()); // Add the Rectangle to the view
+    }
+
+    public void updateCaughtChocos(List<Bonus> caughtChocos) {
+        for (Bonus choco : caughtChocos) {
+            // Update the view to reflect the caught chocolate
+            view.removeBonus(choco); // This will remove the chocolate from the UI
+        }
+    }
+
+    private void saveGame() {
+        List<Block> blocks = GameModel.getBlocks(); // Static method call to get blocks
+
+        System.out.println("Beginning the saving process...");
+        System.out.println("Current Level: " + level);
+        System.out.println("Current Score: " + score);
+        System.out.println("Current Heart Count: " + model.getHeart());
+        System.out.println("Number of Blocks Before Filtering: " + blocks.size());
+
         new Thread(new Runnable() {
             @Override
             public void run() {
-                int sleepTime = 4;
-                for (int i = 0; i < 30; i++) {
-                    if (xBreak == (sceneWidth - breakWidth) && direction == RIGHT) {
-                        return;
+
+                new File(savePathDir).mkdirs();
+                File file = new File(savePath);
+                ObjectOutputStream outputStream = null;
+                try {
+                    outputStream = new ObjectOutputStream(new FileOutputStream(file));
+
+                    outputStream.writeInt(level);
+                    outputStream.writeInt(score);
+                    outputStream.writeInt(model.getHeart());
+                    outputStream.writeInt(model.getDestroyedBlockCount());
+
+
+                    outputStream.writeDouble(xBall);
+                    outputStream.writeDouble(yBall);
+                    outputStream.writeDouble(model.getxPaddle());
+                    outputStream.writeDouble(model.getyPaddle());
+                    outputStream.writeDouble(model.getCenterPaddleX());
+                    outputStream.writeLong(model.getTime());
+                    outputStream.writeLong(model.getGoldTime());
+                    outputStream.writeDouble(model.getvX());
+
+
+                    outputStream.writeBoolean(isExistHeartBlock);
+                    outputStream.writeBoolean(model.isGoldStatus());
+                    outputStream.writeBoolean(model.isGoDownBall());
+                    outputStream.writeBoolean(model.isGoRightBall());
+                    outputStream.writeBoolean(model.isCollideToPaddle());
+                    outputStream.writeBoolean(model.isCollideToPaddleAndMoveToRight());
+                    outputStream.writeBoolean(model.isCollideToRightWall());
+                    outputStream.writeBoolean(model.isCollideToLeftWall());
+                    outputStream.writeBoolean(model.isCollideToRightBlock());
+                    outputStream.writeBoolean(model.isCollideToBottomBlock());
+                    outputStream.writeBoolean(model.isCollideToLeftBlock());
+                    outputStream.writeBoolean(model.isCollideToTopBlock());
+
+                    ArrayList<BlockSerializable> blockSerializables = new ArrayList<BlockSerializable>();
+                    for (Block block : blocks) {
+                        if (block.isDestroyed) {
+                            System.out.println("Skipping destroyed block at Row " + block.getRow() + ", Column " + block.getColumn());
+                            continue;
+                        }
+                        System.out.println("Saving Block: Row " + block.getRow() + ", Column " + block.getColumn() + ", Type " + block.getType());
+                        blockSerializables.add(new BlockSerializable(block.getRow(), block.getColumn(), block.getType()));
                     }
-                    if (xBreak == 0 && direction == LEFT) {
-                        return;
+
+
+                    outputStream.writeObject(blockSerializables);
+
+
+                    view.showMessage("Game Saved", 220, 340);
+
+                    System.out.println("Saving game...");
+                    System.out.println("Total blocks to save: " + blocks.size());
+                    for (BlockSerializable ser : blockSerializables) {
+                        System.out.println("Saving Block: Row " + ser.row + ", Column " + ser.j + ", Type " + ser.type);
                     }
-                    if (direction == RIGHT) {
-                        xBreak++;
-                    } else {
-                        xBreak--;
-                    }
-                    centerBreakX = xBreak + halfBreakWidth;
+                    System.out.println("Total blocks serialized: " + blockSerializables.size());
+
+                } catch (FileNotFoundException e) {
+                    System.err.println("Save file not found: " + e.getMessage());
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    System.err.println("IOException during save: " + e.getMessage());
+                    e.printStackTrace();
+                } finally {
                     try {
-                        Thread.sleep(sleepTime);
-                    } catch (InterruptedException e) {
+                        outputStream.flush();
+                        outputStream.close();
+                    } catch (IOException e) {
                         e.printStackTrace();
-                    }
-                    if (i >= 20) {
-                        sleepTime = i;
                     }
                 }
             }
         }).start();
-
+        System.out.println("Game save process completed.");
 
     }
 
-//    private void saveGame() {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                new File(savePathDir).mkdirs();
-//                File file = new File(savePath);
-//                ObjectOutputStream outputStream = null;
-//                try {
-//                    outputStream = new ObjectOutputStream(new FileOutputStream(file));
-//
-//                    outputStream.writeInt(level);
-//                    outputStream.writeInt(score);
-//                    outputStream.writeInt(heart);
-//                    outputStream.writeInt(destroyedBlockCount);
-//
-//
-//                    outputStream.writeDouble(xBall);
-//                    outputStream.writeDouble(yBall);
-//                    outputStream.writeDouble(xBreak);
-//                    outputStream.writeDouble(yBreak);
-//                    outputStream.writeDouble(centerBreakX);
-//                    outputStream.writeLong(time);
-//                    outputStream.writeLong(goldTime);
-//                    outputStream.writeDouble(vX);
-//
-//
-//                    outputStream.writeBoolean(isExistHeartBlock);
-//                    outputStream.writeBoolean(isGoldStatus);
-//                    outputStream.writeBoolean(goDownBall);
-//                    outputStream.writeBoolean(goRightBall);
-//                    outputStream.writeBoolean(collideToBreak);
-//                    outputStream.writeBoolean(collideToBreakAndMoveToRight);
-//                    outputStream.writeBoolean(collideToRightWall);
-//                    outputStream.writeBoolean(collideToLeftWall);
-//                    outputStream.writeBoolean(collideToRightBlock);
-//                    outputStream.writeBoolean(collideToBottomBlock);
-//                    outputStream.writeBoolean(collideToLeftBlock);
-//                    outputStream.writeBoolean(collideToTopBlock);
-//
-//                    ArrayList<BlockSerializable> blockSerializables = new ArrayList<BlockSerializable>();
-//                    for (Block block : blocks) {
-//                        if (block.isDestroyed) {
-//                            continue;
-//                        }
-//                        blockSerializables.add(new BlockSerializable(block.row, block.column, block.type));
-//                    }
-//
-//                    outputStream.writeObject(blockSerializables);
-//
-//                    new Score().showMessage("Game Saved", Main.this);
-//
-//
-//                } catch (FileNotFoundException e) {
-//                    e.printStackTrace();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                } finally {
-//                    try {
-//                        outputStream.flush();
-//                        outputStream.close();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//        }).start();
-//
-//    }
+    public void loadFromSave() {
+        // Load game state from the model
+        LoadSave loadSave = new LoadSave();
+        loadSave.read();
+        view.hideGameControlButtons();
 
-    public void handle(KeyEvent event) {
-        switch (event.getCode()) {
-            case LEFT:
-                move(LEFT);
-                break;
-            case RIGHT:
+        // Set the loaded data in the model
+        model.setGamePropertiesFromLoad(
+                loadSave.level, loadSave.score, loadSave.heart, loadSave.destroyedBlockCount,
+                loadSave.xBall, loadSave.yBall, loadSave.xBreak, loadSave.yBreak,
+                loadSave.centerBreakX, loadSave.time, loadSave.goldTime, loadSave.vX,
+                loadSave.isExistHeartBlock, loadSave.isGoldStauts, loadSave.goDownBall,
+                loadSave.goRightBall, loadSave.colideToBreak, loadSave.colideToBreakAndMoveToRight,
+                loadSave.colideToRightWall, loadSave.colideToLeftWall, loadSave.colideToRightBlock,
+                loadSave.colideToBottomBlock, loadSave.colideToLeftBlock, loadSave.colideToTopBlock
+        );
 
-                move(RIGHT);
-                break;
-            case DOWN:
-                //setPhysicsToBall();
-                break;
-            case S:
-//                saveGame();
-                break;
+        // Clear existing blocks before loading new ones
+        GameModel.clearBlocks();
+
+        // Re-create blocks from saved data
+        for (BlockSerializable ser : loadSave.blocks) {
+            int r = new Random().nextInt(colors.length);
+            Block newBlock = new Block(ser.row, ser.j, colors[r], ser.type);
+            GameModel.addBlock(newBlock); // Static method to add blocks to GameModel
+            System.out.println("Loaded Block: Row " + ser.row + ", Column: " + ser.j + ", Type: " + ser.type);
         }
 
+        System.out.println("Total Blocks Loaded: " + GameModel.getBlocks().size());
 
-    // ... 其他方法 ...
+        // Update view based on loaded data
+        view.initBallView(model.getxBall(), model.getyBall(), model.getBallRadius());
+        view.initBreakView(model.getxPaddle(), model.getyPaddle(), model.getPaddleWidth(), model.getPaddleHeight());
+        System.out.println("Blocks to display: " + GameModel.getBlocks().size());
+
+        view.displayBlocks();
+        view.updateScoreAndHeart(score, model.getHeart());
+
+        // Ensure onAction is set for the game engine
+        this.engine.setOnAction(this.model);
+
+        // Start game engine with loaded state
+        engine.restart();
+    }
 }
-
-    private void setupEventHandlers(Stage stage) {
-        // 设置键盘和鼠标事件处理
-        stage.addEventHandler(KeyEvent.KEY_PRESSED, this::handle);
-    }
-
-    private void setupGameEngine() {
-        engine = new GameEngine();
-        engine.setOnAction(new GameEngine.OnAction() {
-            @Override
-            public void onUpdate() {
-                GameController.this.onUpdate();
-            }
-
-            @Override
-            public void onPhysicsUpdate() {
-                GameController.this.onPhysicsUpdate();
-            }
-
-            @Override
-            public void onTime(long time) {
-                GameController.this.onTime(time);
-            }
-
-            @Override
-            public void onInit() {
-                GameController.this.onInit();
-            }
-        });
-        engine.setFps(120);
-        engine.start();
-    }
-
-//    private void loadGame() {
-//
-//        LoadSave loadSave = new LoadSave();
-//        loadSave.read();
-//
-//
-//        isExistHeartBlock = loadSave.isExistHeartBlock;
-//        isGoldStatus = loadSave.isGoldStatus;
-//        goDownBall = loadSave.goDownBall;
-//        goRightBall = loadSave.goRightBall;
-//        collideToBreak = loadSave.collideToBreak;
-//        collideToBreakAndMoveToRight = loadSave.collideToBreakAndMoveToRight;
-//        collideToRightWall = loadSave.collideToRightWall;
-//        collideToLeftWall = loadSave.collideToLeftWall;
-//        collideToRightBlock = loadSave.collideToRightBlock;
-//        collideToBottomBlock = loadSave.collideToBottomBlock;
-//        collideToLeftBlock = loadSave.collideToLeftBlock;
-//        collideToTopBlock = loadSave.collideToTopBlock;
-//        level = loadSave.level;
-//        score = loadSave.score;
-//        heart = loadSave.heart;
-//        destroyedBlockCount = loadSave.destroyedBlockCount;
-//        xBall = loadSave.xBall;
-//        yBall = loadSave.yBall;
-//        xBreak = loadSave.xBreak;
-//        yBreak = loadSave.yBreak;
-//        centerBreakX = loadSave.centerBreakX;
-//        time = loadSave.time;
-//        goldTime = loadSave.goldTime;
-//        vX = loadSave.vX;
-//
-//        blocks.clear();
-//        chocos.clear();
-//
-//        for (BlockSerializable ser : loadSave.blocks) {
-//            int r = new Random().nextInt(200);
-//            blocks.add(new Block(ser.row, ser.j, colors[r % colors.length], ser.type));
-//        }
-//
-//
-//        try {
-//            loadFromSave = true;
-//            start(primaryStage);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//
-//    }
-
-    private void handleGameStartActions() {
-        if (level > 1 && level < 18) {
-            load.setVisible(false);
-            newGame.setVisible(false);
-            setupGameEngine();
-        }
-        setupButtonActions();
-    }
-
-    private void setupButtonActions() {
-        load.setOnAction(event -> {
-//            loadGame();
-            load.setVisible(false);
-            newGame.setVisible(false);
-        });
-
-        newGame.setOnAction(event -> {
-            engine = new GameEngine();
-            engine.setOnAction(new GameEngine.OnAction() {
-                @Override
-                public void onUpdate() {
-                    GameController.this.onUpdate();
-                }
-
-                @Override
-                public void onPhysicsUpdate() {
-                    GameController.this.onPhysicsUpdate();
-                }
-
-                @Override
-                public void onTime(long time) {
-                    GameController.this.onTime(time);
-                }
-
-                @Override
-                public void onInit() {
-                    GameController.this.onInit();
-                }
-            });
-            engine.setFps(120);
-            engine.start();
-            load.setVisible(false);
-            newGame.setVisible(false);
-        });
-    }
-
-//    private void handleGameFromSave() {
-//        engine = new GameEngine();
-//        engine.setOnAction(this);
-//        engine.setFps(120);
-//        engine.start();
-//        loadFromSave = false;
-//    }
-    // 更新视图
-
-    // Delegate methods to model
-    private void onUpdate() {
-        model.onUpdate();
-        view.updateView(); // 在模型更新后调用视图更新
-
-        // Update view if necessary
-    }
-
-    public Color[] getcolors() {
-        return colors;
-    }
-
-    private void onPhysicsUpdate() {
-        model.onPhysicsUpdate();
-        view.updateView(); // 在模型更新后调用视图更新
-
-        // Update view if necessary
-    }
-
-    private void onTime(long time) {
-        model.onTime(time);
-        view.updateView(); // 在模型更新后调用视图更新
-
-        // Update view if necessary
-    }
-
-    private void onInit() {
-        model.onInit();
-        view.updateView(); // 在模型更新后调用视图更新
-
-        // Update view if necessary
-    }
-
-
-
-}
-
-
 

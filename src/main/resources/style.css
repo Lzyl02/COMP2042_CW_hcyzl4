@@ -1,4 +1,4 @@
-.root {
+.defaultStyle {
     -fx-background-color: #1d1d1d;
 }
 
@@ -10,4 +10,10 @@
     -fx-text-fill: #FFF;
     -fx-label-padding: 8px;
     -fx-font-size: 15px;
+}
+
+
+.button {
+    -fx-background-color: #FFF;
+    /* other properties */
 }

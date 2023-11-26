@@ -4,15 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4a9654cc-8228-46f8-bed1-53c97c7733d1" name="Changes" comment="Refactor some functions in main, classify the contents.">
+    <list default="true" id="4a9654cc-8228-46f8-bed1-53c97c7733d1" name="Changes" comment="11.23">
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Bombs.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Deamon.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/Block.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/BlockSerializable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/BlockSerializable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/Bonus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/Bonus.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/GameController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/GameEngine.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/GameEngine.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/GameModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/GameModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/GameView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/GameView.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/LoadSave.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/LoadSave.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/Score.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/Score.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/Score.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/sample.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/sample.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +82,20 @@
     &quot;settings.editor.selected.configurable&quot;: &quot;reference.settings.ide.settings.new.ui&quot;
   }
 }</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\admin\IdeaProjects\COMP2042_CW_hcyzl4\src\main\java\brickGame" />
+      <recent name="C:\Users\admin\IdeaProjects\COMP2042_CW_hcyzl4\src\main\resources" />
+    </key>
+  </component>
   <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application">
+      <option name="MAIN_CLASS_NAME" value="brickGame.Main" />
+      <module name="LabTest2" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="JetRunConfigurationType">
       <method v="2">
         <option name="Make" enabled="true" />
@@ -137,7 +157,15 @@
       <option name="project" value="LOCAL" />
       <updated>1700648847888</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="11.23">
+      <option name="closed" value="true" />
+      <created>1700731013543</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1700731013543</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -177,17 +205,7 @@
     <MESSAGE value="2 try" />
     <MESSAGE value="Change GameEngine and Score , correct block right/left collision,classify 'Main' variables." />
     <MESSAGE value="Refactor some functions in main, classify the contents." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor some functions in main, classify the contents." />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/brickGame/GameController.java</url>
-          <line>283</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <MESSAGE value="11.23" />
+    <option name="LAST_COMMIT_MESSAGE" value="11.23" />
   </component>
 </project>

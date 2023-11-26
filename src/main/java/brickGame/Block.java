@@ -15,32 +15,23 @@ public class Block implements Serializable {
     public int column;
 
 
+    public void setDestroyed(boolean destroyed) {
+        isDestroyed = destroyed;
+    }
+
     public boolean isDestroyed = false;
 
     private Color color;
+
+    public static Block getBlock() {
+        return block;
+    }
+
+    public int getType() {
+        return type;
+    }
+
     public int type;
-
-    public int x;
-    public int y;
-
-    private int width = 100;
-    private int height = 30;
-    private int paddingTop = height * 2;
-    private int paddingH = 50;
-    public Rectangle rect;
-
-
-    public static int NO_HIT = -1;
-    public static int HIT_RIGHT = 0;
-    public static int HIT_BOTTOM = 1;
-    public static int HIT_LEFT = 2;
-    public static int HIT_TOP = 3;
-
-    public static int BLOCK_NORMAL = 99;
-    public static int BLOCK_CHOCO = 100;
-    public static int BLOCK_STAR = 101;
-    public static int BLOCK_HEART = 102;
-
 
     public int getX() {
         return x;
@@ -50,9 +41,32 @@ public class Block implements Serializable {
         return y;
     }
 
-    public Color getColors() {
-        return color;
+    public int x;
+    public int y;
+
+    private int width = 100;
+    private int height = 30;
+    private int paddingTop = height * 2;
+    private int paddingH = 50;
+
+    public Rectangle getRect() {
+        return rect;
     }
+
+    public Rectangle rect;
+
+
+    public final static int NO_HIT = -1;
+    public final static int HIT_RIGHT = 0;
+    public final static int HIT_BOTTOM = 1;
+    public final static int HIT_LEFT = 2;
+    public final static int HIT_TOP = 3;
+
+    public static final int BLOCK_NORMAL = 99;
+    public static final int BLOCK_CHOCO = 100;
+    public static final int BLOCK_STAR = 101;
+    public static final int BLOCK_HEART = 102;
+
 
     public Block(int row, int column, Color color, int type) {
         this.row = row;
@@ -64,32 +78,44 @@ public class Block implements Serializable {
     }
 
     private void draw() {
-        x = (column * width) + paddingH;
-        y = (row * height) + paddingTop;
+        x = paddingH + (column * width); // Corrected position calculation
+        y = paddingTop + (row * height); // Corrected position calculation
 
-        rect = new Rectangle();
-        rect.setWidth(width);
-        rect.setHeight(height);
-        rect.setX(x);
-        rect.setY(y);
+        rect = new Rectangle(x, y, width, height); // Corrected Rectangle initialization
 
-        if (type == BLOCK_CHOCO) {
-            Image image = new Image("choco.jpg");
-            ImagePattern pattern = new ImagePattern(image);
-            rect.setFill(pattern);
-        } else if (type == BLOCK_HEART) {
-            Image image = new Image("heart.jpg");
-            ImagePattern pattern = new ImagePattern(image);
-            rect.setFill(pattern);
-        } else if (type == BLOCK_STAR) {
-            Image image = new Image("star.jpg");
-            ImagePattern pattern = new ImagePattern(image);
-            rect.setFill(pattern);
-        } else {
-            rect.setFill(color);
+        switch (type) {
+            case BLOCK_CHOCO:
+                setBlockImage("choco.jpg");
+                break;
+            case BLOCK_HEART:
+                setBlockImage("heart.jpg");
+                break;
+            case BLOCK_STAR:
+                setBlockImage("star.jpg");
+                break;
+            default:
+                rect.setFill(color);
+                break;
         }
-
     }
+
+    private void setBlockImage(String imagePath) {
+        try {
+            Image image = new Image(getClass().getResourceAsStream("/" + imagePath));
+            if (image.isError()) {
+                System.out.println("Error loading image: " + imagePath);
+            } else {
+                rect.setFill(new ImagePattern(image));
+                System.out.println("Star image loaded successfully");
+            }
+        } catch (Exception e) {
+            System.out.println("Exception loading image: " + imagePath);
+            e.printStackTrace();
+        }
+    }
+
+
+
 
 
     public int checkHitToBlock(double xBall, double yBall) {
@@ -132,6 +158,7 @@ public class Block implements Serializable {
         return NO_HIT;
     }
 
+
     public static int getPaddingTop() {
         return block.paddingTop;
     }
@@ -148,4 +175,18 @@ public class Block implements Serializable {
         return block.width;
     }
 
+    public Color getColor() {
+        return color;
+    }
+
+    public int getColumn() {
+        return column;
+    }
+
+    public int getRow() {
+        return row;
+    }
+
+
 }
+
