@@ -44,7 +44,7 @@ public class GameModel implements GameEngine.OnAction {
     private long hitTime  = 0;
     private GameEngine engine;
 
-    private int paddleWidth     = 130;
+    private int paddleWidth     = 120;
 
     public int getPaddleWidth() {
         return paddleWidth;
@@ -67,7 +67,7 @@ public class GameModel implements GameEngine.OnAction {
     private int paddleHeight    = 30;
     private final int halfPaddleWidth = paddleWidth / 2;
     private double maxBounceAngle;
-    public static int  heart    = 99;
+    public static int  heart    = 5;
 
 
     public int getHeart() {
@@ -109,7 +109,7 @@ public class GameModel implements GameEngine.OnAction {
 
     private int       ballRadius = 10;
 
-    public static int level = 0;
+    public static int level = 1;
 
     public long getTime() {
         return time;
@@ -180,6 +180,8 @@ public class GameModel implements GameEngine.OnAction {
     private boolean collideToLeftBlock = false;
     private boolean collideToTopBlock = false;
 
+    private boolean isGameOver = false;
+
     public long getGoldTime() {
         return goldTime;
     }
@@ -218,18 +220,48 @@ public class GameModel implements GameEngine.OnAction {
 
         // Initialization code...
     }
-    // Method to set the controller
+    public void resetGame() {
+        // 重置游戏状态
+        score = 0;
+        heart = 5;
+        level = 1;
+        destroyedBlockCount = 0;
+        isGoldStatus = false;
+
+        // 重置球和挡板的位置和速度
+        xBall = sceneWidth / 2;
+        yBall = sceneHeight - paddleHeight - ballRadius - 1;
+        xPaddle = sceneWidth / 2 - paddleWidth / 2;
+        yPaddle = sceneHeight - 50;
+        vX = baseHorizontalSpeed;
+        vY = baseVerticalSpeed;
+
+        // 清除所有区块和奖励
+        blocks.clear();
+        chocos.clear();
+
+        // 重置游戏结束标志
+        isGameOver = false;
+
+        // 重新初始化游戏
+        initializeGame();
+    }
+
+
+
     public void setController(GameController controller) {
         this.controller = controller;
     }
 
     public void initializeGame() {
         initializeBlocks(level);
+        updatePaddleSize();
         // Initialize other game elements like paddle and ball
-        xPaddle = sceneWidth / 2 - paddleWidth / 2; // Center the paddle
+        xPaddle = 0;
         yPaddle = sceneHeight - 50; // Position the paddle at the bottom
         xBall = xPaddle + paddleWidth / 2; // Start the ball on the paddle
         yBall = yPaddle - ballRadius - 1; // Position the ball above the paddle
+
     }
 
     public void initializeBlocks(int newLevel) {
@@ -412,23 +444,21 @@ public class GameModel implements GameEngine.OnAction {
         }
 
         // Collision with bottom wall
-        if (yBall >= sceneHeight - ballRadius) {
+        if (yBall >= sceneHeight - ballRadius && !isGameOver) { // 添加检查 isGameOver
             goDownBall = false;
             yBall = sceneHeight - ballRadius;
             if (!isGoldStatus) {
-                //TODO gameover
                 heart--;
-                if (controller != null) {
-                    controller.updateScoreView(sceneWidth / 2, sceneHeight / 2, -1);
-                }
-                System.out.println(heart);
                 if (heart == 0) {
+                    isGameOver = true; // 设置游戏结束标志
                     if (controller != null) {
-                        controller.showGameOver();
+                        Platform.runLater(() -> controller.showGameOver()); // 确保在 JavaFX 线程中执行
                     }
-                    engine.stop();
+
+                    engine.stop();// 停止游戏逻辑
+
                 }
-            }// Adjust for bottom wall
+            }
         }
         // Collision with left wall
         if (xBall <= ballRadius) {
@@ -520,7 +550,7 @@ public class GameModel implements GameEngine.OnAction {
         handleSpecialBlocks(block);
 
         // Update the ball's direction and position
-        repositionBallAfterBlockHit(hitCode, block);
+       // repositionBallAfterBlockHit(hitCode, block);
     }
 
 
@@ -562,6 +592,7 @@ public class GameModel implements GameEngine.OnAction {
 
 
 
+/*
     private void repositionBallAfterBlockHit(int hitCode, Block block) {
         final double repositionAmount = 5.0; // Adjust as needed
 
@@ -582,10 +613,26 @@ public class GameModel implements GameEngine.OnAction {
         System.out.println("Ball repositioned to: x = " + xBall + ", y = " + yBall);
 
     }
+*/
+
+
+
+    private void updatePaddleSize() {
+        if (paddleWidth > 30) {
+            paddleWidth -= 10;
+        }
+        if (paddleWidth < 30) {
+            paddleWidth = 30;
+        }
+
+        // 更新视图
+        controller.updatePaddleView();
+    }
 
     public void prepareNextLevel() {
         // Reset game state variables
 
+        updatePaddleSize();
         vX = 1.000;
         resetColideFlags();
         goDownBall = true;
@@ -603,6 +650,7 @@ public class GameModel implements GameEngine.OnAction {
         destroyedBlockCount = 0;
         initializeGame();
         System.out.println("Total blocks created: " + blocks.size());
+
 
         // Prepare for next level
         // (Initialize new blocks, update score/heart if needed, etc.)

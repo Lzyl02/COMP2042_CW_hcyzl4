@@ -11,23 +11,24 @@ public class Main extends Application {
         Pane root = new Pane();
         Scene scene = new Scene(root, 500, 700); // Scene dimensions as constants or configurable values
 
-        GameModel model = new GameModel(); // Create the model
-        GameView view = new GameView(root); // Create the view with the root pane
-        GameController controller = new GameController(view); // Create the controller with the view
+        GameModel model = new GameModel(); // 先创建模型
+        GameView view = new GameView(root); // 接着创建视图
+        GameController controller = new GameController(view); // 最后创建控制器
 
-        model.setController(controller); // Set the controller in the model
-
-        controller.setModel(model); // Set the model in the controller
-        controller.setView(view); // Set the view in the controller
+        // 设置模型、视图和控制器之间的关系
+        model.setController(controller);
+        controller.setModel(model);
+        controller.setView(view);
         view.setController(controller);
 
-//        controller.startGame(); // Start the game logic
+        // 可以启动游戏逻辑
+        // controller.startGame();
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("Brick Game");
         primaryStage.show();
 
-        scene.setOnKeyPressed(controller); // Set up event listeners
+        scene.setOnKeyPressed(controller); // 设置键盘事件监听器
     }
 
     public static void main(String[] args) {

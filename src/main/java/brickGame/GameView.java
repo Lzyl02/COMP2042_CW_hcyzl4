@@ -20,6 +20,7 @@ import java.util.Random;
 
 
 public class GameView {
+    private GameController controller;
     private Pane root;
     private Label scoreLabel;
     private Label heartLabel;
@@ -29,6 +30,17 @@ public class GameView {
     private int sceneWidth = 500;
     private Button loadGameButton;
     private Button newGameButton;
+
+
+    public void updatePaddleSize(double xPaddle, int newWidth) {
+        Platform.runLater(() -> {
+            if (rect != null) {
+                rect.setWidth(newWidth);
+                // 更新 paddle 位置以保持其居中
+                rect.setX(xPaddle - newWidth / 2.0);
+            }
+        });
+    }
 
 
     public GameView(Pane root) {
@@ -128,6 +140,7 @@ public class GameView {
         });
     }
 
+
     public void initBreakView(double xBreak, double yBreak, int breakWidth, int breakHeight) {
         rect = new Rectangle();
         rect.setWidth(breakWidth);
@@ -144,6 +157,8 @@ public class GameView {
             levelLabel.setText("Level: " + level);
         });
     }
+
+
 
     public void showScoreLabel(double x, double y, int score) {
         String sign = score >= 0 ? "+" : "";
@@ -169,24 +184,45 @@ public class GameView {
         });
     }
 
+    public void clearGameElements() {
+        Platform.runLater(() -> {
+            // 移除球和挡板
+            root.getChildren().removeAll(ball, rect);
+
+            // 移除游戏结束标签和重启按钮
+            root.getChildren().removeIf(node -> node instanceof Label || node instanceof Button);
+
+            // 可以添加更多的清理逻辑，如移除区块等
+        });
+    }
+
     public void showGameOver() {
         Label gameOverLabel = new Label("Game Over :(");
         gameOverLabel.setTranslateX(200);
         gameOverLabel.setTranslateY(250);
         gameOverLabel.setScaleX(2);
         gameOverLabel.setScaleY(2);
-        // 设置 gameOverLabel 的位置和大小
+
         Button restartButton = new Button("Restart");
         restartButton.setTranslateX(220);
         restartButton.setTranslateY(300);
-        restartButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
-//                restartButton.setOnAction(actionEvent -> controller.restartGame());
-            }
+        restartButton.setOnAction(event -> {
+            clearGameElements(); // 清除旧游戏元素
+            controller.startGame(); // 开始新游戏
         });
-        // 设置 restartButton 的位置和事件处理
-        root.getChildren().addAll(gameOverLabel, restartButton);
+
+        Platform.runLater(() -> {
+            root.getChildren().addAll(gameOverLabel, restartButton);
+        });
+    }
+
+
+
+    // 设置 controller 的方法
+    public void setController(GameController controller) {
+        newGameButton.setOnAction(event -> controller.startGame());
+        loadGameButton.setOnAction(event -> controller.loadFromSave());
+        this.controller = controller;
     }
 
     public void showWin() {
@@ -267,11 +303,6 @@ public class GameView {
     }
 
 
-    public void setController(GameController controller) {
-        newGameButton.setOnAction(event -> controller.startGame());
-        loadGameButton.setOnAction(event -> controller.loadFromSave());
-    }
-
     public void hideGameControlButtons() {
         Platform.runLater(() -> {
 
@@ -336,6 +367,6 @@ public void updateBlockVisibility(Block block, boolean isVisible) {
 
 
 }
-    // 可能还有其他更新视图的方法...
+
 
 

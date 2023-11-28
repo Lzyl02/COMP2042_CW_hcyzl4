@@ -14,6 +14,7 @@
 
 
 .button {
+    -fx-text-fill: blue; /* or any other color */
     -fx-background-color: #FFF;
     /* other properties */
 }

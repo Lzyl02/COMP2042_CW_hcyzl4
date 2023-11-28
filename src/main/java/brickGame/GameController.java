@@ -6,6 +6,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -15,7 +16,9 @@ import java.util.Random;
 import static brickGame.GameModel.level;
 import static brickGame.GameModel.score;
 
+
 public class GameController implements EventHandler<KeyEvent> {
+    Stage primaryStage;
     private final GameEngine engine;
     private GameModel model;
 
@@ -107,6 +110,8 @@ public class GameController implements EventHandler<KeyEvent> {
     }
 
 
+
+
     @Override
     public void handle(KeyEvent event) {
         if (event.getEventType() == KeyEvent.KEY_RELEASED) {
@@ -164,6 +169,7 @@ public class GameController implements EventHandler<KeyEvent> {
     }
 
 
+
     private void stopPaddleLeft() {
         // Add your logic to stop the leftward movement of the paddle
         // For example, set movingLeft to false if you use a boolean flag
@@ -193,11 +199,11 @@ public class GameController implements EventHandler<KeyEvent> {
     // 更多控制器方法
 
 
-    void showGameOver() {
-        // Display the game over screen
-        view.showGameOver();
+    public void showGameOver() {
+        if (view != null) {
+            Platform.runLater(() -> view.showGameOver());
+        }
     }
-
 
     void changeBallAppearance(String appearance) {
         // Change the appearance of the ball
@@ -263,6 +269,7 @@ public class GameController implements EventHandler<KeyEvent> {
                     return;
                 }
 
+
                 // Continue with next level preparation if level is not 18
                 updateBallAppearance(false);
                 model.prepareNextLevel();
@@ -287,6 +294,13 @@ public class GameController implements EventHandler<KeyEvent> {
         });
     }
 
+    public void updatePaddleView() {
+        int newWidth = model.getPaddleWidth();
+        double xPaddle = model.getxPaddle();
+        Platform.runLater(() -> {
+            view.updatePaddleSize(xPaddle, newWidth);
+        });
+    }
 
     public void updateBonuses() {
         for (Bonus bonus : model.getChocos()) {

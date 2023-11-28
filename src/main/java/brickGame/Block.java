@@ -130,23 +130,27 @@ public class Block implements Serializable {
         double dy = Math.abs(yBall - yCenter);
         double halfWidth = width / 2;
         double halfHeight = height / 2;
+        double collisionThreshold = ballRadius; // 碰撞阈值
 
+        // 检查水平碰撞
         if (xBall >= x && xBall <= x + width) {
-            if (yBall == y + height) {
+            if (Math.abs(yBall - (y + height)) <= collisionThreshold) {
                 return HIT_BOTTOM;
-            } else if (yBall == y) {
+            } else if (Math.abs(yBall - y) <= collisionThreshold) {
                 return HIT_TOP;
             }
         }
 
+        // 检查垂直碰撞
         if (yBall >= y && yBall <= y + height) {
-            if (xBall == x + width) {
+            if (Math.abs(xBall - (x + width)) <= collisionThreshold) {
                 return HIT_RIGHT;
-            } else if (xBall == x) {
+            } else if (Math.abs(xBall - x) <= collisionThreshold) {
                 return HIT_LEFT;
             }
         }
 
+        // 检查复合碰撞
         if (dx <= halfWidth + ballRadius && dy <= halfHeight + ballRadius) {
             if (dx > dy) {
                 return (xBall < xCenter) ? HIT_LEFT : HIT_RIGHT;
@@ -157,6 +161,7 @@ public class Block implements Serializable {
 
         return NO_HIT;
     }
+
 
 
     public static int getPaddingTop() {
