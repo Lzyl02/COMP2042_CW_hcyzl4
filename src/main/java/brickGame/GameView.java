@@ -186,13 +186,14 @@ public class GameView {
 
     public void clearGameElements() {
         Platform.runLater(() -> {
-            // 移除球和挡板
-            root.getChildren().removeAll(ball, rect);
+            // 移除所有的 Circle 和 Rectangle 实例（包括球和挡板）
+            root.getChildren().removeIf(node -> node instanceof Circle || node instanceof Rectangle);
 
             // 移除游戏结束标签和重启按钮
             root.getChildren().removeIf(node -> node instanceof Label || node instanceof Button);
 
-            // 可以添加更多的清理逻辑，如移除区块等
+            // 重新添加基础 UI 组件
+            initUIComponents();
         });
     }
 
@@ -208,7 +209,7 @@ public class GameView {
         restartButton.setTranslateY(300);
         restartButton.setOnAction(event -> {
             clearGameElements(); // 清除旧游戏元素
-            controller.startGame(); // 开始新游戏
+            controller.restartGame(); // 重启游戏
         });
 
         Platform.runLater(() -> {

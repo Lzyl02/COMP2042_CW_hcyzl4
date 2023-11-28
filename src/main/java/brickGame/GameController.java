@@ -294,6 +294,29 @@ public class GameController implements EventHandler<KeyEvent> {
         });
     }
 
+
+    public void restartGame() {
+        // 重置游戏模型的状态
+        model.resetGame();
+
+        // 清除视图中的旧游戏元素
+        view.clearGameElements();
+
+        // 重新初始化游戏状态
+        model.initializeGame();
+
+
+        // 重新启动游戏引擎
+        engine.start();
+
+        // 更新视图
+        view.initBallView(model.getxBall(), model.getyBall(), model.getBallRadius());
+        view.initBreakView(model.getxPaddle(), model.getyPaddle(), model.getPaddleWidth(), model.getPaddleHeight());
+        view.displayBlocks();
+
+    }
+
+
     public void updatePaddleView() {
         int newWidth = model.getPaddleWidth();
         double xPaddle = model.getxPaddle();

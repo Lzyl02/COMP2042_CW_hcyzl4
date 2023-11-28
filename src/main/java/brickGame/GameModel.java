@@ -67,7 +67,7 @@ public class GameModel implements GameEngine.OnAction {
     private int paddleHeight    = 30;
     private final int halfPaddleWidth = paddleWidth / 2;
     private double maxBounceAngle;
-    public static int  heart    = 5;
+    public static int  heart    = 1;
 
 
     public int getHeart() {
@@ -220,6 +220,47 @@ public class GameModel implements GameEngine.OnAction {
 
         // Initialization code...
     }
+
+
+
+    public void setController(GameController controller) {
+        this.controller = controller;
+    }
+
+    public void initializeGame() {
+        initializeBlocks(level);
+        updatePaddleSize();
+        // Initialize other game elements like paddle and ball
+        xPaddle = 0;
+        yPaddle = sceneHeight - 50; // Position the paddle at the bottom
+        xBall = xPaddle + paddleWidth / 2; // Start the ball on the paddle
+        yBall = yPaddle - ballRadius - 1; // Position the ball above the paddle
+
+    }
+
+
+    public void initializeBlocks(int newLevel) {
+        this.level = newLevel;
+        blocks.clear(); // Clear existing blocks
+        Random random = new Random();
+        int rows = 4; // For example, 4 rows of blocks
+        int columns = level + 1; // Number of columns based on level
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < columns; j++) {
+                int r = random.nextInt(colors.length);
+                int type = determineBlockType(r, random);
+                Block block = new Block(j, i, colors[r], type);
+                blocks.add(block);
+                // Log block creation
+                System.out.println("Block created: Row " + i + ", Column " + j +
+                        ", Color: " + colors[r] + ", Type: " + type);
+            }
+        }
+
+        System.out.println("Total blocks created for level " + level + ": " + blocks.size());
+    }
+
     public void resetGame() {
         // 重置游戏状态
         score = 0;
@@ -247,44 +288,6 @@ public class GameModel implements GameEngine.OnAction {
         initializeGame();
     }
 
-
-
-    public void setController(GameController controller) {
-        this.controller = controller;
-    }
-
-    public void initializeGame() {
-        initializeBlocks(level);
-        updatePaddleSize();
-        // Initialize other game elements like paddle and ball
-        xPaddle = 0;
-        yPaddle = sceneHeight - 50; // Position the paddle at the bottom
-        xBall = xPaddle + paddleWidth / 2; // Start the ball on the paddle
-        yBall = yPaddle - ballRadius - 1; // Position the ball above the paddle
-
-    }
-
-    public void initializeBlocks(int newLevel) {
-        this.level = newLevel;
-        blocks.clear(); // Clear existing blocks
-        Random random = new Random();
-        int rows = 4; // For example, 4 rows of blocks
-        int columns = level + 1; // Number of columns based on level
-
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                int r = random.nextInt(colors.length);
-                int type = determineBlockType(r, random);
-                Block block = new Block(j, i, colors[r], type);
-                blocks.add(block);
-                // Log block creation
-                System.out.println("Block created: Row " + i + ", Column " + j +
-                        ", Color: " + colors[r] + ", Type: " + type);
-            }
-        }
-
-        System.out.println("Total blocks created for level " + level + ": " + blocks.size());
-    }
 
     private int determineBlockType(int randomNumber, Random random) {
         // Logic to randomly assign different types of blocks
