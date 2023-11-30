@@ -13,6 +13,7 @@ public class Block implements Serializable {
 
     public int row;
     public int column;
+    private boolean hasGeneratedBomb = false;
 
 
     public void setDestroyed(boolean destroyed) {
@@ -195,6 +196,14 @@ public class Block implements Serializable {
 
     public int getRow() {
         return row;
+    }
+
+    public boolean hasGeneratedBomb() {
+        return hasGeneratedBomb;
+    }
+
+    public void setGeneratedBomb(boolean hasGeneratedBomb) {
+        this.hasGeneratedBomb = hasGeneratedBomb;
     }
 
 

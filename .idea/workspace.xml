@@ -4,16 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4a9654cc-8228-46f8-bed1-53c97c7733d1" name="Changes" comment="after refactoring">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Bombs.png" afterDir="false" />
+    <list default="true" id="4a9654cc-8228-46f8-bed1-53c97c7733d1" name="Changes" comment="add new block(Daemon)">
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Bombs.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/Block.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/Bonus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/Bonus.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/GameController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/GameModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/GameModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/GameView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/GameView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/Bombs.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/Deamon.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/daemon.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/Bombs.png" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -183,7 +181,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701186328725</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="add new block(Daemon)">
+      <option name="closed" value="true" />
+      <created>1701338215154</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1701338215154</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -225,6 +231,7 @@
     <MESSAGE value="Refactor some functions in main, classify the contents." />
     <MESSAGE value="11.23" />
     <MESSAGE value="after refactoring" />
-    <option name="LAST_COMMIT_MESSAGE" value="after refactoring" />
+    <MESSAGE value="add new block(Daemon)" />
+    <option name="LAST_COMMIT_MESSAGE" value="add new block(Daemon)" />
   </component>
 </project>

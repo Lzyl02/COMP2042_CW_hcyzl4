@@ -38,9 +38,14 @@ public class GameController implements EventHandler<KeyEvent> {
 
 
     private AnimationTimer bonusUpdater;
+    private AnimationTimer bombUpdater;
 
     private static boolean isExistHeartBlock = false;
     private ArrayList<Bonus> chocos;
+    private ArrayList<Bombs> bombs = new ArrayList<>(); // 保存所有炸弹的列表
+
+
+
     // Define custom key release events
 
     private static Color[] colors = new Color[]{
@@ -101,6 +106,45 @@ public class GameController implements EventHandler<KeyEvent> {
         return bonus.getY() > sceneHeight  || bonus.isTaken();
     }
 
+
+    // 获取炸弹列表的方法
+
+    public void initializeBombUpdater() {
+        bombUpdater = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                ArrayList<Bombs> bombsToRemove = new ArrayList<>();
+                for (Bombs bomb : model.getBombs()) {
+                    bomb.fallDown(); // 更新位置
+                    view.updateBombPosition(bomb); // 反映位置更新到视图
+
+                    if (bomb.getY() >= sceneHeight || bomb.isTaken()) {
+                        bombsToRemove.add(bomb); // 将要移除的炸弹添加到列表
+                    }
+                }
+                model.getBombs().removeAll(bombsToRemove); // 从模型中移除炸弹
+                bombsToRemove.forEach(view::removeBomb); // 从视图中移除炸弹
+            }
+        };
+        bombUpdater.start();
+    }
+    private boolean shouldRemoveBomb(Bombs bomb) {
+        // 示例逻辑: 如果 bomb 的 Y 坐标超过了屏幕底部或者它被标记为 exploded，则应该移除
+        return bomb.getY() > sceneHeight || bomb.isTaken();
+    }
+    public void addBombToView(Bombs bomb) {
+        view.addBomb(bomb); // 直接传递 Bombs 对象给视图
+    }
+
+
+    public void removeBombFromView(Bombs bomb) {
+        view.removeBomb(bomb); // 从视图中移除炸弹
+    }
+    public void createAndDropBomb(Block block) {
+        Bombs bomb = new Bombs(block.getRow(), block.getColumn());
+        model.getBombs().add(bomb); // 将炸弹添加到模型中
+        addBombToView(bomb); // 将炸弹添加到视图中
+    }
     public void startGame() {
         try {
             System.out.println("Starting game initialization...");
@@ -118,8 +162,10 @@ public class GameController implements EventHandler<KeyEvent> {
             System.out.println("Blocks to display: " + model.getBlocks().size());
             view.displayBlocks(); // 这将显示所有类型的方块，包括 Daemon block
 
-            // 初始化并启动奖励更新器
+            // 初始化并启动更新器
             initializeBonusUpdater();
+            initializeBombUpdater();
+
 
             // 确保在启动游戏引擎之前处理所有UI更新
             Platform.runLater(() -> {
@@ -519,5 +565,9 @@ public class GameController implements EventHandler<KeyEvent> {
         // Start game engine with loaded state
         engine.restart();
     }
+
+
+
+
 }
 

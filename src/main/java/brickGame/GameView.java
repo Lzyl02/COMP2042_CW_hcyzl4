@@ -360,7 +360,29 @@ public void updateBlockVisibility(Block block, boolean isVisible) {
         Platform.runLater(() -> root.getChildren().remove(rect));
     }
 
+    public void addBomb(Bombs bomb) {
+        Platform.runLater(() -> {
+            Rectangle bombRect = bomb.getRectangle(); // 获取炸弹的图形
+            root.getChildren().add(bombRect); // 将炸弹添加到游戏界面
+            System.out.println("Bomb added to UI.");
+        });
+    }
 
+    public void updateBombPosition(Bombs bomb) {
+        Platform.runLater(() -> {
+            Rectangle bombRect = bomb.getRectangle();
+            if (bombRect != null) {
+                bombRect.setX(bomb.getX()); // 使用 getX() 方法获取炸弹的 x 坐标
+                bombRect.setY(bomb.getY()); // 使用 getY() 方法获取炸弹的 y 坐标
+            }
+        });
+    }
+    public void removeBomb(Bombs bomb) {
+        Rectangle bombRect = bomb.getRectangle();
+        Platform.runLater(() -> {
+            root.getChildren().remove(bombRect); // 从游戏界面移除炸弹
+        });
+    }
 
 }
 

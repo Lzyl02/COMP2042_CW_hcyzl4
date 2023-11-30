@@ -14,6 +14,8 @@ public class GameModel implements GameEngine.OnAction {
     private double fallingSpeed = 2.0; // Adjust this value as needed
     private static final List<Block> blocks = new ArrayList<>();
 
+    private ArrayList<Bombs> bombs = new ArrayList<>();
+
 
 
     public static List<Block> getBlocks() {
@@ -84,6 +86,9 @@ public class GameModel implements GameEngine.OnAction {
         return yBall;
     }
 
+    public ArrayList<Bombs> getBombs() {
+        return bombs;
+    }
     // 游戏状态变量
     private double xBall;
     private double yBall;
@@ -391,6 +396,7 @@ public class GameModel implements GameEngine.OnAction {
         }
         catchChoco();
 
+        catchBomb();
         handleChocoMovement();
         if (controller != null) {
             controller.updateBonuses();
@@ -404,6 +410,42 @@ public class GameModel implements GameEngine.OnAction {
                 choco.y += fallingSpeed;
                 // Log the new position for debugging
                 System.out.println("Choco updated: x = " + choco.getX() + ", y = " + choco.y);
+            }
+        }
+    }
+
+    private void handleBombMovement() {
+        ArrayList<Bombs> bombsToRemove = new ArrayList<>();
+        for (Bombs bomb : bombs) {
+            bomb.fallDown(); // 更新炸弹的位置
+
+            // 判断炸弹是否需要被移除（比如，如果炸弹已经到达底部或者被接住）
+            if (bomb.getY() > sceneHeight || bomb.isTaken()) {
+                bombsToRemove.add(bomb);
+            }
+        }
+
+        // 移除标记的炸弹
+        bombs.removeAll(bombsToRemove);
+        bombsToRemove.forEach(b -> {
+            controller.removeBombFromView(b); // 通知控制器从视图中移除炸弹
+        });
+    }
+
+
+    public void catchBomb() {
+        for (Bombs bomb : bombs) {
+            if (bomb.getY() >= yPaddle && bomb.getY() <= yPaddle + paddleHeight &&
+                    bomb.getX() >= xPaddle && bomb.getX() <= xPaddle + paddleWidth && !bomb.isTaken()) {
+
+                System.out.println("Bomb caught: x = " + bomb.getX() + ", y = " + bomb.getY());
+                bomb.setTaken(true); // 立即更新状态
+                score -= 1;
+                System.out.println("Score deducted. New score: " + score);
+                controller.updateScoreView(bomb.getX(), bomb.getY(), -1);
+
+                // 中断循环，避免在同一时间捕获多个炸弹
+                break;
             }
         }
     }
@@ -566,21 +608,23 @@ public class GameModel implements GameEngine.OnAction {
     }
 
     private void processBlockHit(Block block, int hitCode) {
-        System.out.println("Block hit detected at: x = " + block.x + ", y = " + block.y);
+        System.out.println("Block hit detected at: x = " + block.getX() + ", y = " + block.getY());
         score += 1;
-        block.isDestroyed = true;
+        block.setDestroyed(true);
         destroyedBlockCount++;
 
         if (controller != null) {
-            controller.updateScoreView(block.x, block.y, 1);
-            controller.handleBlockHit(block); // This will update the block visibility in the view
+            controller.updateScoreView(block.getX(), block.getY(), 1);
+            controller.handleBlockHit(block);
         }
 
-        handleSpecialBlocks(block);
-
-        // Update the ball's direction and position
-       // repositionBallAfterBlockHit(hitCode, block);
+        // 处理 Daemon 方块生成炸弹的逻辑
+        if (block.getType() == Block.BLOCK_DAEMON && !block.hasGeneratedBomb()) {
+            controller.createAndDropBomb(block);
+            block.setGeneratedBomb(true);
+        }
     }
+
 
 
 
@@ -588,7 +632,7 @@ public class GameModel implements GameEngine.OnAction {
         switch (block.type) {
             case Block.BLOCK_CHOCO:
                 handleChocoBlock(block);
-
+                createAndHandleBomb(block);
                 break;
 
             case Block.BLOCK_STAR:
@@ -601,6 +645,11 @@ public class GameModel implements GameEngine.OnAction {
                 break;
             case Block.BLOCK_HEART:
                 heart++;
+                break;
+            case Block.BLOCK_DAEMON:
+                Bombs bomb = new Bombs(block.getRow(), block.getColumn());
+                bombs.add(bomb); // 将新创建的炸弹添加到列表中
+                controller.addBombToView(bomb); // 调用控制器方法将炸弹添加到视图中
                 break;
         }
     }
@@ -619,32 +668,13 @@ public class GameModel implements GameEngine.OnAction {
         System.out.println("Chocolate bonus added to list.");
     }
 
-
-
-/*
-    private void repositionBallAfterBlockHit(int hitCode, Block block) {
-        final double repositionAmount = 5.0; // Adjust as needed
-
-        switch (hitCode) {
-            case Block.HIT_TOP:
-                yBall = block.y - ballRadius - repositionAmount;
-                break;
-            case Block.HIT_BOTTOM:
-                yBall = block.y + block.getHeight() + ballRadius + repositionAmount;
-                break;
-            case Block.HIT_LEFT:
-                xBall = block.x - ballRadius - repositionAmount;
-                break;
-            case Block.HIT_RIGHT:
-                xBall = block.x + block.getWidth() + ballRadius + repositionAmount;
-                break;
+    private void createAndHandleBomb(Block block) {
+        Bombs bomb = new Bombs(block.getRow(), block.getColumn());
+        bombs.add(bomb); // 将炸弹添加到模型的列表中
+        if (controller != null) {
+            controller.addBombToView(bomb); // 在视图中显示炸弹
         }
-        System.out.println("Ball repositioned to: x = " + xBall + ", y = " + yBall);
-
     }
-*/
-
-
 
     private void updatePaddleSize() {
         if (paddleWidth > 30) {
@@ -672,14 +702,12 @@ public class GameModel implements GameEngine.OnAction {
         level++;
         System.out.println("Level incremented to: " + level);
 
-        // Clear blocks but keep existing bonuses
+
         blocks.clear();
-        // chocos.clear(); // 不要清除现有的 Bonus 对象
         destroyedBlockCount = 0;
         initializeGame();
         System.out.println("Total blocks created: " + blocks.size());
 
-        // No need to reset or restart the bonus updater; it should continue running
     }
 
 
