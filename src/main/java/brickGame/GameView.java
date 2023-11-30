@@ -49,36 +49,23 @@ public class GameView {
     }
     public void displayBlocks() {
         Platform.runLater(() -> {
-            List<Block> blocks = GameModel.getBlocks(); // Static method call to get blocks
+            List<Block> blocks = GameModel.getBlocks(); // 获取所有方块，包括 Daemon block
 
             System.out.println("Displaying blocks: Total count = " + blocks.size());
             System.out.println("Initial root children count: " + root.getChildren().size());
 
-            // Clear previous blocks from the root
+            // 移除与 Block 相关的 Rectangle
             root.getChildren().removeIf(node -> node instanceof Rectangle && blocks.contains(((Rectangle) node).getUserData()));
 
+            // 添加所有类型的方块
             for (Block block : blocks) {
                 Rectangle blockRect = block.getRect();
-                System.out.println("Adding block to UI: " +
-                        "Row: " + block.getRow() +
-                        ", Column: " + block.getColumn() +
-                        ", x: " + blockRect.getX() +
-                        ", y: " + blockRect.getY() +
-                        ", Width: " + blockRect.getWidth() +
-                        ", Height: " + blockRect.getHeight() +
-                        ", Color: " + block.getColor());
-
-                // Debug: Check each block's rectangle
-                if (blockRect == null) {
-                    System.out.println("Null rectangle for Block (Row: " + block.getRow() + ", Column: " + block.getColumn() + ")");
-                    continue;
+                // 特别处理 Daemon block，如果需要的话
+                if (block.getType() == Block.BLOCK_DAEMON) {
+                    // 比如设置不同的样式或行为
+                    // blockRect.setStyle(...); // 例如设置不同的样式
                 }
-
-                blockRect.setUserData(block); // Associate the block with its rectangle
-                System.out.println("Block (Row: " + block.getRow() + ", Column: " + block.getColumn() +
-                        "): x = " + blockRect.getX() + ", y = " + blockRect.getY() +
-                        ", width = " + blockRect.getWidth() + ", height = " + blockRect.getHeight());
-
+                blockRect.setUserData(block); // 关联 Block 与 Rectangle
                 root.getChildren().add(blockRect);
             }
 
@@ -112,6 +99,8 @@ public class GameView {
     }
 
     public void initBallView(double xBall, double yBall, int ballRadius) {
+        System.out.println("Initializing ball view at x: " + xBall + ", y: " + yBall + ", radius: " + ballRadius);
+
         Random random = new Random();
 
         ball = new Circle();
@@ -198,6 +187,8 @@ public class GameView {
     }
 
     public void showGameOver() {
+        System.out.println("Showing game over screen...");
+
         Label gameOverLabel = new Label("Game Over :(");
         gameOverLabel.setTranslateX(200);
         gameOverLabel.setTranslateY(250);
@@ -208,13 +199,20 @@ public class GameView {
         restartButton.setTranslateX(220);
         restartButton.setTranslateY(300);
         restartButton.setOnAction(event -> {
-            clearGameElements(); // 清除旧游戏元素
+            System.out.println("Restart button clicked");
+
+//            clearGameElements(); // 清除旧游戏元素
             controller.restartGame(); // 重启游戏
+            hideGameControlButtons();
+            System.out.println("Game controls hidden, restarting game");
+
         });
 
         Platform.runLater(() -> {
             root.getChildren().addAll(gameOverLabel, restartButton);
         });
+        System.out.println("Game over screen displayed.");
+
     }
 
 
@@ -351,18 +349,15 @@ public void updateBlockVisibility(Block block, boolean isVisible) {
             System.out.println("Chocolate bonus added to UI.");
         });
     }
+
+
     public void updateBonusPosition(Bonus bonus) {
-        Rectangle chocoRectangle = bonus.getRectangle(); // Assuming getRectangle() returns the Rectangle of the bonus
-        chocoRectangle.setY(bonus.getY());
+        Rectangle chocoRectangle = bonus.getRectangle();
     }
 
     public void removeBonus(Bonus bonus) {
-        Platform.runLater(() -> {
-            // Assuming you have a method in Bonus to get the associated Rectangle
-            Rectangle rect = bonus.getRectangle();
-
-            root.getChildren().remove(rect);
-        });
+        Rectangle rect = bonus.getRectangle();
+        Platform.runLater(() -> root.getChildren().remove(rect));
     }
 
 

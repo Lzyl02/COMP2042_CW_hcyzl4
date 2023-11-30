@@ -23,6 +23,7 @@ public class Block implements Serializable {
 
     private Color color;
 
+
     public static Block getBlock() {
         return block;
     }
@@ -66,6 +67,7 @@ public class Block implements Serializable {
     public static final int BLOCK_CHOCO = 100;
     public static final int BLOCK_STAR = 101;
     public static final int BLOCK_HEART = 102;
+    public static final int BLOCK_DAEMON = 103;
 
 
     public Block(int row, int column, Color color, int type) {
@@ -92,6 +94,9 @@ public class Block implements Serializable {
                 break;
             case BLOCK_STAR:
                 setBlockImage("star.jpg");
+                break;
+            case BLOCK_DAEMON: // Handling for Daemon block
+                setBlockImage("daemon.png");
                 break;
             default:
                 rect.setFill(color);

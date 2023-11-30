@@ -14,6 +14,8 @@ public class GameModel implements GameEngine.OnAction {
     private double fallingSpeed = 2.0; // Adjust this value as needed
     private static final List<Block> blocks = new ArrayList<>();
 
+
+
     public static List<Block> getBlocks() {
         return blocks;
     }
@@ -35,11 +37,11 @@ public class GameModel implements GameEngine.OnAction {
     public void setxPaddle(double xPaddle) {
         this.xPaddle = xPaddle;
     }
+    private int sceneWidth = 500;
 
-    private double xPaddle = 0.0f;
+    private double xPaddle = sceneWidth/2;
     private double centerPaddleX;
     private double yPaddle = 640.0f;
-    private int sceneWidth = 500;
     private int sceneHeight = 700;
     private long hitTime  = 0;
     private GameEngine engine;
@@ -67,7 +69,7 @@ public class GameModel implements GameEngine.OnAction {
     private int paddleHeight    = 30;
     private final int halfPaddleWidth = paddleWidth / 2;
     private double maxBounceAngle;
-    public static int  heart    = 1;
+    public static int  heart    =99;
 
 
     public int getHeart() {
@@ -123,10 +125,14 @@ public class GameModel implements GameEngine.OnAction {
     public ArrayList<Bonus> getChocos() {
         return chocos;
     }
+
+
+
     private boolean isExistHeartBlock = false;
 
     private ArrayList<Bonus> chocos;
 
+    public static final int BLOCK_DAEMON = 3;
 
     public boolean isGoDownBall() {
         return goDownBall;
@@ -196,7 +202,6 @@ public class GameModel implements GameEngine.OnAction {
 
     private double vX = 4.000;
     private double vY = 4.000;
-    private AnimationTimer paddleCollisionTimer;
 
 
     private Color[]          colors = new Color[]{
@@ -228,38 +233,59 @@ public class GameModel implements GameEngine.OnAction {
     }
 
     public void initializeGame() {
-        initializeBlocks(level);
-        updatePaddleSize();
-        // Initialize other game elements like paddle and ball
-        xPaddle = 0;
-        yPaddle = sceneHeight - 50; // Position the paddle at the bottom
-        xBall = xPaddle + paddleWidth / 2; // Start the ball on the paddle
-        yBall = yPaddle - ballRadius - 1; // Position the ball above the paddle
+        initializeBlocks(level); // 初始化所有类型的方块，包括 Daemon block
 
+        // 初始化球和挡板的位置
+        xPaddle = sceneWidth / 2; // 挡板在屏幕中央
+        yPaddle = sceneHeight - 50; // 挡板位置在屏幕底部
+        xBall = xPaddle + paddleWidth / 2; // 球开始在挡板上
+        yBall = yPaddle - ballRadius - 1; // 球的位置在挡板之上
     }
+
+
 
 
     public void initializeBlocks(int newLevel) {
         this.level = newLevel;
-        blocks.clear(); // Clear existing blocks
-        Random random = new Random();
-        int rows = 4; // For example, 4 rows of blocks
-        int columns = level + 1; // Number of columns based on level
+        blocks.clear(); // 清除现有的方块
 
+        Random random = new Random();
+        int rows = level; // 行数基于级别
+        int columns = 4; // 固定为 4 列
+
+        // 在每个级别中创建相应数量的 Daemon block
+        for (int i = 0; i < level; i++) {
+            int daemonRow = random.nextInt(rows);
+            int daemonColumn = random.nextInt(columns);
+            Block daemonBlock = new Block(daemonRow, daemonColumn, Color.RED, Block.BLOCK_DAEMON);
+            blocks.add(daemonBlock);
+        }
+
+        // 创建其他类型的方块
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < columns; j++) {
-                int r = random.nextInt(colors.length);
-                int type = determineBlockType(r, random);
-                Block block = new Block(j, i, colors[r], type);
-                blocks.add(block);
-                // Log block creation
-                System.out.println("Block created: Row " + i + ", Column " + j +
-                        ", Color: " + colors[r] + ", Type: " + type);
+                final int currentRow = i;
+                final int currentColumn = j;
+
+                // 检查是否已经在这个位置创建了 Daemon block
+                boolean isDaemonBlockPresent = blocks.stream()
+                        .anyMatch(b -> b.getRow() == currentRow && b.getColumn() == currentColumn && b.getType() == Block.BLOCK_DAEMON);
+
+                if (!isDaemonBlockPresent) {
+                    int r = random.nextInt(colors.length);
+                    int type = determineBlockType(r, random);
+                    Block block = new Block(currentRow, currentColumn, colors[r], type);
+                    blocks.add(block);
+                    System.out.println("Block created: Row " + currentRow + ", Column " + currentColumn +
+                            ", Color: " + colors[r] + ", Type: " + type);
+                }
             }
         }
 
         System.out.println("Total blocks created for level " + level + ": " + blocks.size());
     }
+
+
 
     public void resetGame() {
         // 重置游戏状态
@@ -274,8 +300,8 @@ public class GameModel implements GameEngine.OnAction {
         yBall = sceneHeight - paddleHeight - ballRadius - 1;
         xPaddle = sceneWidth / 2 - paddleWidth / 2;
         yPaddle = sceneHeight - 50;
-        vX = baseHorizontalSpeed;
-        vY = baseVerticalSpeed;
+        vX = 4;
+        vY = 4;
 
         // 清除所有区块和奖励
         blocks.clear();
@@ -634,7 +660,6 @@ public class GameModel implements GameEngine.OnAction {
 
     public void prepareNextLevel() {
         // Reset game state variables
-
         updatePaddleSize();
         vX = 1.000;
         resetColideFlags();
@@ -647,17 +672,16 @@ public class GameModel implements GameEngine.OnAction {
         level++;
         System.out.println("Level incremented to: " + level);
 
-        // Clear game elements
+        // Clear blocks but keep existing bonuses
         blocks.clear();
-        chocos.clear();
+        // chocos.clear(); // 不要清除现有的 Bonus 对象
         destroyedBlockCount = 0;
         initializeGame();
         System.out.println("Total blocks created: " + blocks.size());
 
-
-        // Prepare for next level
-        // (Initialize new blocks, update score/heart if needed, etc.)
+        // No need to reset or restart the bonus updater; it should continue running
     }
+
 
 
 

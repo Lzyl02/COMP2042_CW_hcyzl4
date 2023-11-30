@@ -1,5 +1,6 @@
 package brickGame;
 
+import javafx.animation.AnimationTimer;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.scene.input.KeyCode;
@@ -28,11 +29,15 @@ public class GameController implements EventHandler<KeyEvent> {
     private int sceneWidth = 500;
     private double updateInterval = 1000000000.0 / 240.0; // Adjust the frame rate (240 FPS in this example)
     private long lastUpdateTime = 0;
+    private int sceneHeight = 700;
 
 
     private double centerPaddleX;
     private double xBall;
     private double yBall;
+
+
+    private AnimationTimer bonusUpdater;
 
     private static boolean isExistHeartBlock = false;
     private ArrayList<Bonus> chocos;
@@ -74,40 +79,66 @@ public class GameController implements EventHandler<KeyEvent> {
 
 
 
+    public void initializeBonusUpdater() {
+        bonusUpdater = new AnimationTimer() {
+            @Override
+            public void handle(long now) {
+                List<Bonus> bonuses = model.getChocos();
+                for (Bonus bonus : bonuses) {
+                    bonus.fallDown(); // 更新位置
+                    view.updateBonusPosition(bonus); // 反映位置更新到视图
+
+                    if (shouldRemoveBonus(bonus)) {
+                        view.removeBonus(bonus); // 从视图中移除
+                    }
+                }
+            }
+        };
+        bonusUpdater.start();
+    }
+    private boolean shouldRemoveBonus(Bonus bonus) {
+        // 示例逻辑: 如果 bonus 的 Y 坐标超过了屏幕底部或者它被标记为 taken，则应该移除
+        return bonus.getY() > sceneHeight  || bonus.isTaken();
+    }
+
     public void startGame() {
         try {
-
             System.out.println("Starting game initialization...");
             System.out.println("Current Level: " + level);
             view.hideGameControlButtons();
+
             // Initialize game state in the model
             model.initializeGame();
 
-            // Initialize ball and paddle views based on the model state
+            // 初始化球和挡板视图基于模型状态
             view.initBallView(model.getxBall(), model.getyBall(), model.getBallRadius());
             view.initBreakView(model.getxPaddle(), model.getyPaddle(), model.getPaddleWidth(), model.getPaddleHeight());
 
-            // Display blocks
+            // 显示所有方块（包括 Daemon block）
             System.out.println("Blocks to display: " + model.getBlocks().size());
+            view.displayBlocks(); // 这将显示所有类型的方块，包括 Daemon block
 
-            view.displayBlocks();
+            // 初始化并启动奖励更新器
+            initializeBonusUpdater();
 
-            // Ensure all UI updates have been processed before starting the game engine
+            // 确保在启动游戏引擎之前处理所有UI更新
             Platform.runLater(() -> {
                 System.out.println("Game initialization completed.");
                 System.out.println("Starting game engine...");
                 this.engine.setOnAction(this.model);
 
-                // Start the game engine
-                engine.setFps(120);
+                // 启动游戏引擎
+              //  engine.setFps(120);
                 engine.start();
             });
 
         } catch (Exception e) {
             System.err.println("Error during game initialization: " + e.getMessage());
-            // Handle the error appropriately
+            // 相应地处理错误
         }
     }
+
+
 
 
 
@@ -295,7 +326,11 @@ public class GameController implements EventHandler<KeyEvent> {
     }
 
 
+
+
     public void restartGame() {
+        System.out.println("Restarting game...");
+
         // 重置游戏模型的状态
         model.resetGame();
 
@@ -305,14 +340,17 @@ public class GameController implements EventHandler<KeyEvent> {
         // 重新初始化游戏状态
         model.initializeGame();
 
+        // 更新视图
+        Platform.runLater(() -> {
+            view.initBallView(model.getxBall(), model.getyBall(), model.getBallRadius());
+        view.initBreakView(model.getxPaddle(), model.getyPaddle(), model.getPaddleWidth(), model.getPaddleHeight());
+        });
+
+        view.displayBlocks();
 
         // 重新启动游戏引擎
         engine.start();
-
-        // 更新视图
-        view.initBallView(model.getxBall(), model.getyBall(), model.getBallRadius());
-        view.initBreakView(model.getxPaddle(), model.getyPaddle(), model.getPaddleWidth(), model.getPaddleHeight());
-        view.displayBlocks();
+        System.out.println("Game restarted successfully.");
 
     }
 
