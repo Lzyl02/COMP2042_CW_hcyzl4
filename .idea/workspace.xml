@@ -4,14 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="4a9654cc-8228-46f8-bed1-53c97c7733d1" name="Changes" comment="add new block(Daemon)">
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Bombs.jpg" afterDir="false" />
+    <list default="true" id="4a9654cc-8228-46f8-bed1-53c97c7733d1" name="Changes" comment="finishing adding">
+      <change afterPath="$PROJECT_DIR$/src/main/resources/Bombs.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/resources/gbd.jpg" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/Block.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/Block.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/GameController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/GameController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/GameModel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/GameModel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/brickGame/GameView.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/brickGame/GameView.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/Bombs.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/Bombs.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Bombs.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/ball.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/ball.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/bg.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/bg.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/block.jpg" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/block.jpg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/goldball.png" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/goldball.png" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/style.css" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/style.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -189,7 +194,15 @@
       <option name="project" value="LOCAL" />
       <updated>1701338215154</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="finishing adding">
+      <option name="closed" value="true" />
+      <created>1701351530774</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1701351530774</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -232,6 +245,18 @@
     <MESSAGE value="11.23" />
     <MESSAGE value="after refactoring" />
     <MESSAGE value="add new block(Daemon)" />
-    <option name="LAST_COMMIT_MESSAGE" value="add new block(Daemon)" />
+    <MESSAGE value="finishing adding" />
+    <option name="LAST_COMMIT_MESSAGE" value="finishing adding" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/brickGame/Main.java</url>
+          <line>10</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

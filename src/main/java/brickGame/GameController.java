@@ -11,6 +11,7 @@ import javafx.stage.Stage;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -113,21 +114,22 @@ public class GameController implements EventHandler<KeyEvent> {
         bombUpdater = new AnimationTimer() {
             @Override
             public void handle(long now) {
-                ArrayList<Bombs> bombsToRemove = new ArrayList<>();
-                for (Bombs bomb : model.getBombs()) {
+                Iterator<Bombs> iterator = model.getBombs().iterator();
+                while (iterator.hasNext()) {
+                    Bombs bomb = iterator.next();
                     bomb.fallDown(); // 更新位置
                     view.updateBombPosition(bomb); // 反映位置更新到视图
 
                     if (bomb.getY() >= sceneHeight || bomb.isTaken()) {
-                        bombsToRemove.add(bomb); // 将要移除的炸弹添加到列表
+                        iterator.remove(); // 使用迭代器移除炸弹
+                        view.removeBomb(bomb); // 从视图中移除炸弹
                     }
                 }
-                model.getBombs().removeAll(bombsToRemove); // 从模型中移除炸弹
-                bombsToRemove.forEach(view::removeBomb); // 从视图中移除炸弹
             }
         };
         bombUpdater.start();
     }
+
     private boolean shouldRemoveBomb(Bombs bomb) {
         // 示例逻辑: 如果 bomb 的 Y 坐标超过了屏幕底部或者它被标记为 exploded，则应该移除
         return bomb.getY() > sceneHeight || bomb.isTaken();
@@ -174,7 +176,7 @@ public class GameController implements EventHandler<KeyEvent> {
                 this.engine.setOnAction(this.model);
 
                 // 启动游戏引擎
-              //  engine.setFps(120);
+                engine.setFps(120);
                 engine.start();
             });
 

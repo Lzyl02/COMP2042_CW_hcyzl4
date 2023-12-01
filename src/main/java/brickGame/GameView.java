@@ -104,7 +104,7 @@ public class GameView {
         Random random = new Random();
 
         ball = new Circle();
-        ball.setRadius(ballRadius);
+        ball.setRadius(12);
         ball.setFill(new ImagePattern(new Image("ball.png")));
         ball.setCenterX(xBall);
         ball.setCenterY(yBall);
@@ -362,7 +362,7 @@ public void updateBlockVisibility(Block block, boolean isVisible) {
 
     public void addBomb(Bombs bomb) {
         Platform.runLater(() -> {
-            Rectangle bombRect = bomb.getRectangle(); // 获取炸弹的图形
+            Circle bombRect = bomb.getCircle(); // 获取炸弹的图形
             root.getChildren().add(bombRect); // 将炸弹添加到游戏界面
             System.out.println("Bomb added to UI.");
         });
@@ -370,15 +370,16 @@ public void updateBlockVisibility(Block block, boolean isVisible) {
 
     public void updateBombPosition(Bombs bomb) {
         Platform.runLater(() -> {
-            Rectangle bombRect = bomb.getRectangle();
-            if (bombRect != null) {
-                bombRect.setX(bomb.getX()); // 使用 getX() 方法获取炸弹的 x 坐标
-                bombRect.setY(bomb.getY()); // 使用 getY() 方法获取炸弹的 y 坐标
+            Circle bombCircle = bomb.getCircle();
+            if (bombCircle != null) {
+                bombCircle.setCenterX(bomb.getX()); // Use getX() method to get the bomb's x coordinate
+                bombCircle.setCenterY(bomb.getY()); // Use getY() method to get the bomb's y coordinate
             }
         });
     }
+
     public void removeBomb(Bombs bomb) {
-        Rectangle bombRect = bomb.getRectangle();
+        Circle bombRect = bomb.getCircle();
         Platform.runLater(() -> {
             root.getChildren().remove(bombRect); // 从游戏界面移除炸弹
         });

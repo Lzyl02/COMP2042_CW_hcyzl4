@@ -1,20 +1,42 @@
 .defaultStyle {
-    -fx-background-color: #1d1d1d;
+    -fx-background-image: url('bg.jpg');
+    -fx-background-repeat: stretch;
+    -fx-background-size: cover;
+    -fx-background-position: center center;
 }
 
 .goldRoot {
-    -fx-background-color: #4b4a08;
+    -fx-background-image: url('gbd.jpg');
+    -fx-background-size: cover; /* This will ensure that your image covers the entire area */
+    -fx-background-repeat: no-repeat; /* Prevents the image from repeating */
+    -fx-background-position: center center; /* Centers the image */
 }
 
 .label {
-    -fx-text-fill: #FFF;
-    -fx-label-padding: 8px;
-    -fx-font-size: 15px;
+    -fx-text-fill: #FFF;           /* White text color */
+    -fx-label-padding: 8px;        /* Padding around the label */
+    -fx-font-size: 13px;           /* Slightly larger font size for visibility */
+    -fx-font-family: "Comic Sans MS", cursive, sans-serif; /* Cartoon-like font family */
+    -fx-font-weight: bold;         /* Bold text for emphasis */
+    -fx-letter-spacing: 0.5px;     /* Slight spacing between letters */
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.8) , 5, 0.0 , 0 , 1 ); /* Adding a subtle drop shadow */
 }
 
 
+
+
 .button {
-    -fx-text-fill: blue; /* or any other color */
-    -fx-background-color: #FFF;
-    /* other properties */
+    -fx-font-family: 'Arial', sans-serif;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-background-color: #D22328;
+    -fx-border-color: black;
+    -fx-border-width: 2px;
+    -fx-background-radius: 5;
+    -fx-padding: 10 20;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.8), 10, 0, 0, 0);
+    -fx-min-width: 100px; /* 最小宽度 */
+    -fx-min-height: 40px; /* 最小高度 */
+    -fx-max-width: 500px; /* 最大宽度 */
+    -fx-max-height: 40px; /* 最大高度 */
 }
