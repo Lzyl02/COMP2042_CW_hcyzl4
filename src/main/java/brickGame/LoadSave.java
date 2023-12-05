@@ -13,8 +13,6 @@ import java.util.ArrayList;
  */
 public class LoadSave {
 
-    GameModel gameModel;
-    GameController controller;
     public boolean          isExistHeartBlock;
     public boolean          isGoldStauts;
     public boolean          goDownBall;

@@ -1,65 +1,104 @@
 package brickGame;
 
-import javafx.animation.PauseTransition;
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-
 import javafx.scene.control.Label;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.control.Button;
-
-import javafx.util.Duration;
 
 import java.util.List;
-import java.util.Random;
-
-
+/**
+ * The GameViewInit class is responsible for initializing and managing the UI components of the game.
+ */
 public class GameViewInit {
-
-    private GameController controller;
     private Pane root;
+    private GameModel model;
+    private Button loadGameButton;
+    private Button newGameButton;
+
+
     private Label scoreLabel;
     private Label heartLabel;
     private Label levelLabel;
     private Circle ball;
     private Rectangle rect;
-    private int sceneWidth = 500;
-    private Button loadGameButton;
-    private Button newGameButton;
-    private Rectangle paddle;
 
-    public GameViewInit(Pane root) {
+    /**
+     * Constructs a new GameViewInit with the specified root pane and game model.
+     *
+     * @param root  The root pane of the application.
+     * @param model The game model to be used for initializing UI components.
+     */
+    public GameViewInit(Pane root, GameModel model) {
         this.root = root;
+        this.model = model;
     }
+    /**
+     * Initializes the UI components of the game.
+     * This includes labels, buttons, and styles.
+     *
+     * @param isRestart Indicates if the game is being restarted.
+     */
+    public void initUIComponents(boolean isRestart) {
+        // Initialize labels
+        // Initialize labels dynamically
+        scoreLabel = new Label();
+        heartLabel = new Label();
+        levelLabel = new Label();
+        updateLabels(); // Update labels with current model values
 
-    public void initUIComponents() {
-        // 初始化UI组件
-        scoreLabel = new Label("Score: "+ GameModel.score);
-        heartLabel = new Label("Heart : "+ GameModel.heart);
-        levelLabel = new Label("Level: " + GameModel.level );
-
-        // 设置标签位置等
-        heartLabel.setTranslateX(sceneWidth - 70);
+        // Set label positions and other properties
+        heartLabel.setTranslateX(model.getSceneWidth() - 100); // Assuming root has a predefined width
         levelLabel.setTranslateY(20);
         setSceneStyle();
-        root.getChildren().addAll(scoreLabel, heartLabel, levelLabel);
+        // Initialize buttons
         loadGameButton = new Button("Load Game");
         newGameButton = new Button("Start New Game");
 
-        // Set positions and other properties
+        // Set button positions and other properties
         loadGameButton.setTranslateX(220);
         loadGameButton.setTranslateY(300);
         newGameButton.setTranslateX(220);
         newGameButton.setTranslateY(340);
 
-        root.getChildren().addAll(loadGameButton, newGameButton);
+        // Add components to the root
+        // Add components to the root
+        root.getChildren().addAll(scoreLabel, heartLabel, levelLabel);
+
+        // Add buttons only if it's not a restart
+        if (!isRestart) {
+            root.getChildren().addAll(loadGameButton, newGameButton);
+        }
+
     }
 
+    // Getters for UI components to allow GameView to set actions or update them
+    public Button getLoadGameButton() {
+        return loadGameButton;
+    }
+
+    public Button getNewGameButton() {
+        return newGameButton;
+    }
+
+    public Label getScoreLabel() {
+        return scoreLabel;
+    }
+
+    public Label getHeartLabel() {
+        return heartLabel;
+    }
+
+    public Label getLevelLabel() {
+        return levelLabel;
+    }
+
+    /**
+     * Applies a stylesheet and a default style class to the root pane.
+     */
     public void setSceneStyle() {
         // Apply the stylesheet to the root pane
         root.getStylesheets().add("style.css"); // Ensure the path is correct
@@ -68,30 +107,34 @@ public class GameViewInit {
         root.getStyleClass().add("defaultStyle"); // This should match a class in your CSS
     }
 
+    /**
+     * Initializes the view for the ball.
+     *
+     * @param xBall      The initial X coordinate of the ball.
+     * @param yBall      The initial Y coordinate of the ball.
+     * @param ballRadius The radius of the ball.
+     */
     public void initBallView(double xBall, double yBall, int ballRadius) {
         System.out.println("Initializing ball view at x: " + xBall + ", y: " + yBall + ", radius: " + ballRadius);
 
-        Random random = new Random();
-
         ball = new Circle();
-        ball.setRadius(12);
+        ball.setRadius(ballRadius);
         ball.setFill(new ImagePattern(new Image("ball.png")));
         ball.setCenterX(xBall);
         ball.setCenterY(yBall);
+
+        ball.setId("ballId");  // Set an ID for the ball
         root.getChildren().add(ball);
     }
-    public void initPaddle(double xPaddle, double yPaddle, int paddleWidth, int paddleHeight) {
-        paddle = new Rectangle();
-        // 设置挡板的属性，例如位置、大小、颜色等
-        paddle.setWidth(100); // 示例宽度
-        paddle.setHeight(20); // 示例高度
-        paddle.setX(root.getWidth() / 2 - paddle.getWidth() / 2); // 挡板初始化位置 (水平居中)
-        paddle.setY(root.getHeight() - 30); // 挡板初始化位置 (底部)
-        paddle.setFill(javafx.scene.paint.Color.BLUE); // 挡板颜色
 
-        root.getChildren().add(paddle); // 将挡板添加到游戏界面
-    }
-
+    /**
+     * Initializes the view for the paddle (break).
+     *
+     * @param xBreak      The initial X coordinate of the paddle.
+     * @param yBreak      The initial Y coordinate of the paddle.
+     * @param breakWidth  The width of the paddle.
+     * @param breakHeight The height of the paddle.
+     */
     public void initBreakView(double xBreak, double yBreak, int breakWidth, int breakHeight) {
         rect = new Rectangle();
         rect.setWidth(breakWidth);
@@ -99,11 +142,61 @@ public class GameViewInit {
         rect.setX(xBreak);
         rect.setY(yBreak);
         rect.setFill(new ImagePattern(new Image("block.jpg")));
+
+        rect.setId("paddleId");  // Set an ID for the paddle
         root.getChildren().add(rect);
     }
 
 
+    // Getters for the ball and rectangle
+    public Circle getBall() {
+        return ball;
+    }
 
+    public Rectangle getRect() {
+        return rect;
+    }
+
+    /**
+     * Displays all blocks on the game screen.
+     */
+    public void displayBlocks() {
+        Platform.runLater(() -> {
+            List<Block> blocks = model.getBlocks(); // 获取所有方块，包括 Daemon block
+
+            System.out.println("Displaying blocks: Total count = " + blocks.size());
+            System.out.println("Initial root children count: " + root.getChildren().size());
+
+            // 移除与 Block 相关的 Rectangle
+            root.getChildren().removeIf(node -> node instanceof Rectangle && blocks.contains(((Rectangle) node).getUserData()));
+
+            // 添加所有类型的方块
+            for (Block block : blocks) {
+                Rectangle blockRect = block.getRect();
+                // 特别处理 Daemon block，如果需要的话
+                if (block.getType() == Block.BLOCK_DAEMON) {
+                    // 比如设置不同的样式或行为
+                    // blockRect.setStyle(...); // 例如设置不同的样式
+                }
+                blockRect.setUserData(block); // 关联 Block 与 Rectangle
+                root.getChildren().add(blockRect);
+            }
+
+            System.out.println("All blocks added to root.");
+            System.out.println("Final root children count: " + root.getChildren().size());
+        });
+    }
+
+    /**
+     * Updates the text and positioning of the score, heart, and level labels.
+     */
+    private void updateLabels() {
+        scoreLabel.setText("Score: " + model.getScore());
+        heartLabel.setText("Heart: " + model.getHeart());
+        levelLabel.setText("Level: " + model.getLevel());
+        // Set label positions and other properties
+        // ...
+    }
 
 
 }

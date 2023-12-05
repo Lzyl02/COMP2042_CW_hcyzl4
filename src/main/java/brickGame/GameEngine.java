@@ -5,187 +5,183 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Game engine class responsible for managing and controlling the main game loop.
- * Offers functionality to start, stop, and restart the game, along with the option to set the game's frame rate.
- * <p>
- * This class uses a thread pool to handle game initialization, updates, physics calculations, and time tracking concurrently.
- * </p>
+ * GameEngine class is responsible for managing the main game loop and coordinating various game updates.
+ * It provides methods to start, stop, and restart the game, and allows setting the frame rate.
  */
 public class GameEngine {
 
     private OnAction onAction;
-    private volatile int fps = 15;
-    private boolean isStopped = true;
+    private volatile boolean isStopped = true;
     private ExecutorService executorService;
     private long time = 0;
-    private boolean isRunning;
+    private int frameTimeMillis;
 
-    public boolean isRunning() {
-        return isRunning;
-    }
+    /**
+     * Interface defining callback methods for game actions.
+     */
     public interface OnAction {
+        /**
+         * Called on every frame to update game state.
+         */
         void onUpdate();
+        /**
+         * Called when the game is initialized.
+         */
         void onInit();
+        /**
+         * Called regularly for physics calculations.
+         */
         void onPhysicsUpdate();
+
+        /**
+         * Called to update game time.
+         * @param time The current game time.
+         */
         void onTime(long time);
     }
 
     /**
-     * Sets the action callbacks for the game.
-     * This method allows specifying the behavior of the game at different stages such as update, initialization, physics calculation, and time tracking.
-     *
-     * @param onAction The callback interface for game actions.
+     * Sets the OnAction callback to handle game actions.
+     * @param onAction The OnAction implementation to be used by the game engine.
      */
     public void setOnAction(OnAction onAction) {
-        System.out.println("OnAction set in GameEngine.");
-
         this.onAction = onAction;
     }
 
     /**
-     * Sets the frame rate of the game.
-     * This method is used to control the frequency of the game update loop.
-     *
-     * @param fps Frames per second, indicating the speed of game updates.
+     * Sets the frames per second for the game loop.
+     * @param fps The desired frames per second.
      */
     public void setFps(int fps) {
-        this.fps = 1000 / fps;
-        System.out.println("FPS set to: " + this.fps + " ms per frame");
+        frameTimeMillis = 1000 / fps;
     }
 
     /**
-     * Starts the game engine.
-     * This method initializes the thread pool and starts various components of the game such as game updates, physics calculations, and time tracking.
+     * Starts the game loop. Initializes the executor service and submits game loop tasks.
      */
     public void start() {
-        System.out.println("Game engine is starting...");
+        if (executorService != null && !executorService.isTerminated()) {
+            stopAndWait();
+        }
 
         time = 0;
         isStopped = false;
-        executorService = Executors.newFixedThreadPool(3);
+        executorService = Executors.newFixedThreadPool(4);
 
-        executorService.submit(this::Initialize);
-        executorService.submit(this::Update);
-        executorService.submit(this::PhysicsCalculation);
-        executorService.submit(this::TimeStart);
+        submitTasks();
+    }
 
-        System.out.println("Game engine started and threads initiated.");
+    private void submitTasks() {
+        executorService.submit(this::initialize);
+        executorService.submit(this::update);
+        executorService.submit(this::physicsCalculation);
+        executorService.submit(this::timeTracking);
     }
 
     /**
-     * Stops the game engine.
-     * This method shuts down the thread pool and stops all game updates and calculations.
+     * Stops the game loop immediately without waiting for tasks to complete.
      */
+
     public void stop() {
-        System.out.println("Stopping game engine...");
-
-        if (!isStopped) {
-            isStopped = true;
-            executorService.shutdown();
-            try {
-                if (!executorService.awaitTermination(800, TimeUnit.MILLISECONDS)) {
-                    executorService.shutdownNow();
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-
-            System.out.println("Game engine stopped.");
-        }
+        isStopped = true;
+        shutdownExecutorService();
     }
 
     /**
-     * Stops the game engine and waits for it to completely stop.
-     * This method shuts down the thread pool and waits until all tasks are completed or timeout occurs.
+     * Stops the game loop and waits for all tasks to complete before returning.
      */
     public void stopAndWait() {
-        System.out.println("Stopping game engine and waiting for termination...");
-
-        if (!isStopped) {
-            isStopped = true;
-            executorService.shutdown();
-            try {
+        isStopped = true;
+        shutdownExecutorService();
+        try {
+            if (!executorService.awaitTermination(1, TimeUnit.SECONDS)) {
+                executorService.shutdownNow();
                 if (!executorService.awaitTermination(1, TimeUnit.SECONDS)) {
-                    executorService.shutdownNow();
+                    System.err.println("Executor did not terminate");
                 }
-                System.out.println("Game engine stopped and all threads terminated.");
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-                System.out.println("Interruption while stopping game engine.");
             }
+        } catch (InterruptedException ie) {
+            Thread.currentThread().interrupt();
+            executorService.shutdownNow();
         }
     }
-    public void restart() {
-        stopAndWait(); // Ensure previous instance is stopped
-        start();       // Start a new instance
-    }
-    private void Initialize() {
-        System.out.println("Initializing game...");
-        onAction.onInit();
-        System.out.println("Initialization complete.");
-    }
+
     /**
-     * The update thread of the game.
-     * This method is responsible for periodically invoking the game's update logic.
+     * Shuts down the executor service associated with the game loop.
+     * This method is called to cleanly terminate the game loop's threads.
      */
-    private void Update() {
-        System.out.println("Update thread started.");
-        while (!isStopped) {
+    private void shutdownExecutorService() {
+        if (executorService != null) {
+            executorService.shutdown();
+        }
+    }
+
+    /**
+     * Restarts the game loop by first stopping it and then starting it again.
+     */
+    public void restart() {
+        stopAndWait();
+        start();
+    }
+
+    /**
+     * Initializes the game. This method is called once when the game loop starts.
+     * It triggers the onInit() method of the OnAction interface if it's not null.
+     */
+    private void initialize() {
+        if (onAction != null) {
+            onAction.onInit();
+        }
+    }
+
+    /**
+     * Continuously updates the game state. This method runs in a loop as long as the game is not stopped.
+     * It calls the onUpdate() method of the OnAction interface at regular intervals defined by frameTimeMillis.
+     * If interrupted, it handles the interruption by setting the thread's interrupt flag.
+     */
+    private void update() {
+        while (!isStopped && onAction != null) {
             try {
                 onAction.onUpdate();
-                Thread.sleep(fps);
+                Thread.sleep(frameTimeMillis);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                System.out.println("Update thread interrupted.");
-                break;
             }
         }
-        System.out.println("Update thread ended.");
     }
 
     /**
-     * The physics calculation thread of the game.
-     * This method regularly performs physics calculations to support the game's physical interactions.
+     * Handles the physics calculations of the game. This method runs in a loop and is responsible for physics updates.
+     * It calls the onPhysicsUpdate() method of the OnAction interface at a fixed interval (approximately 60 times per second).
+     * If interrupted, it handles the interruption by setting the thread's interrupt flag.
      */
-    private void PhysicsCalculation() {
-        if (onAction == null) {
-            System.out.println("Error: onAction is null in GameEngine.");
-            return;
-        }
-        System.out.println("Physics calculation thread started.");
-        int physicsFps = 1000 / 60; // Example: Set this to 60 times per second
-        while (!isStopped) {
+    private void physicsCalculation() {
+        while (!isStopped && onAction != null) {
             try {
-
                 onAction.onPhysicsUpdate();
-
-                Thread.sleep(physicsFps); // Sleep for shorter duration for more frequent checks
+                Thread.sleep(16); // 60 times per second
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                System.out.println("Physics calculation thread interrupted.");
-                break;
             }
         }
-        System.out.println("Physics calculation thread ended.");
     }
 
     /**
-     * The time tracking thread of the game.
-     * This method is responsible for regularly updating the game time, which is used for time-related operations in game logic.
+     * Tracks and updates the game time. This method increments the time variable every millisecond and
+     * calls the onTime() method of the OnAction interface with the updated time.
+     * If interrupted, it handles the interruption by setting the thread's interrupt flag.
      */
-    private void TimeStart() {
-        System.out.println("Time tracking thread started.");
+    private void timeTracking() {
         while (!isStopped) {
             try {
                 time++;
-                onAction.onTime(time);
+                if (onAction != null) {
+                    onAction.onTime(time);
+                }
                 Thread.sleep(1);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
-                System.out.println("Time tracking thread interrupted.");
-                break;
             }
         }
-        System.out.println("Time tracking thread ended.");
     }
 }

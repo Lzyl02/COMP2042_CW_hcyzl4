@@ -24,17 +24,12 @@ public class Main extends Application {
         Scene scene = new Scene(root, 500, 700); // Scene dimensions as constants or configurable values
 
         GameModel model = new GameModel(); // 先创建模型
-        GameView view = new GameView(root); // 接着创建视图
-        GameController controller = new GameController(view, model); // 最后创建控制器
+        GameView view = new GameView(root,model); // 接着创建视图
+        GameController controller = new GameController(root,view,model); // 最后创建控制器
 
-        // 设置模型、视图和控制器之间的关系
-//        model.setController(controller);
-//        controller.setModel(model);
-//        controller.setView(view);
         view.setController(controller);
 
-        // 可以启动游戏逻辑
-        // controller.startGame();
+
 
         primaryStage.setScene(scene);
         primaryStage.setTitle("Brick Game");
@@ -42,8 +37,6 @@ public class Main extends Application {
 
         scene.setOnKeyPressed(controller); // 设置键盘事件监听器
     }
-
-
 
 
     public static void main(String[] args) {
