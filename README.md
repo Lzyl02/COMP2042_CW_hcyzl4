@@ -384,12 +384,26 @@ Identify and explain the features that were not implemented, with reasons for th
     1. **Class Removal**: To streamline the codebase by eliminating redundant or single-use classes, thereby simplifying the project's structure.
     2. **Functionality Redistribution**: To adhere to a more structured and organized MVC (Model-View-Controller) architecture. This change ensures that each aspect of the game's functionality is handled by the appropriate component, improving code maintainability and scalability.
 
-
 ## Unexpected Problems
-Discuss any unexpected problems encountered during the project and how you addressed or attempted to resolve them.
 
-### Problem 1
-- Description of the problem.
-- Solutions attempted.
+### Problem 1: Frequent Black Screen Issues on Windows PC
 
-(Continue listing other problems and solutions...)
+#### Description of the Problem
+While working on the project using a Windows computer, I frequently encountered a situation where the screen would suddenly go black, making it impossible to continue using the PC. This issue significantly hindered my progress as it disrupted my workflow and access to my work environment and tools.
+
+#### Solutions Attempted
+To address this problem, I took several steps:
+1. **Transition to a Different Operating System**: I switched from the Windows PC to a Mac computer. This change was necessary to avoid the recurring black screen issue and ensure a more stable working environment.
+2. **Software and File Reinstallation**: On the Mac, I reinstalled all necessary software and related files that were initially set up on the Windows PC. This step was crucial to reestablish my work setup on the new system.
+3. **Reconnecting to GitHub**: I reconnected my IntelliJ IDEA code files to GitHub. This reconnection was imperative to maintain version control and project synchronization after the switch.
+
+### Problem 2: Loss of Uncommitted Work on GitHub
+
+#### Description of the Problem
+While working on the `README.md` file directly on GitHub using a Mac, I faced a system freeze that caused an unexpected reboot. This incident happened before I could commit my changes, and upon restarting, I discovered that GitHub had not saved my uncommitted work, leading to a complete loss of the progress I had made.
+
+#### Solutions Attempted
+To mitigate this issue and prevent future losses, I implemented the following strategies:
+1. **Re-Writing the `README.md`**: The immediate response was to rewrite the entire `README.md` file, trying to replicate the lost content as closely as possible.
+2. **Frequent Commits**: I started committing changes more frequently to GitHub. This practice ensured that my work was regularly saved on the platform, reducing the risk of losing significant progress due to technical issues.
+3. **Creating Redundant Backups**: Recognizing the vulnerability of relying on a single platform, I began duplicating my work in another location as a backup. This approach involved maintaining a copy of my work on a different system or storage solution, providing an additional layer of security against data loss.
