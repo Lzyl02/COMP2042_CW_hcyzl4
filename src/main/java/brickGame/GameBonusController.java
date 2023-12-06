@@ -9,6 +9,8 @@ import java.util.List;
 /**
  * Controls and manages game bonuses and bombs in a brick-style game.
  * Coordinates between the game model and view, updating game elements like bonuses and bombs in real-time.
+ *
+ * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/GameBonusController.java">GameBonusController.java</a>
  */
 public class GameBonusController {
 

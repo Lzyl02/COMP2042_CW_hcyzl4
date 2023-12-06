@@ -17,6 +17,9 @@ import static brickGame.GameModel.*;
 /**
  * Central controller class for a brick-style game. Manages game logic, handles user input,
  * and coordinates with various other controllers.
+ *
+ *  @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/GameController.java">GameController.java</a>
+ *
  */
 
 public class GameController implements EventHandler<KeyEvent>,  GameEngine.OnAction {
