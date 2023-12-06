@@ -11,10 +11,10 @@ import java.util.Random;
  * Represents a bonus item in the game.
  * Bonus items have a position, falling speed, and a state. This class provides methods to create the bonus item,
  * make it fall down, and check if it has been obtained.
- * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/Bonus.java">Bonus.java</a>
  * <p>
  * This class implements the {@link java.io.Serializable} interface, to support serialization and deserialization of bonus item objects.
  * </p>
+ * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/Bonus.java">Bonus.java</a>
  */
 public class Bonus implements Serializable {
     public Rectangle choco;

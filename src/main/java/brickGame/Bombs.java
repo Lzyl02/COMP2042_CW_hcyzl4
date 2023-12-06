@@ -9,10 +9,10 @@ import java.io.Serializable;
  * Represents a bomb in the game.
  * Bombs have a position, falling speed, and a state. This class provides methods to create the bomb,
  * make it fall down, and check if it has been dealt with.
- * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/Bombs.java">Bombs.java</a>
  * <p>
  * This class implements the {@link java.io.Serializable} interface, to support serialization and deserialization of bomb objects.
  * </p>
+ * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/Bombs.java">Bombs.java</a>
  */
 public class Bombs implements Serializable {
     private Circle bomb;
