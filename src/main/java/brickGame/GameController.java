@@ -111,7 +111,11 @@ public class GameController implements EventHandler<KeyEvent>,  GameEngine.OnAct
     }
 
 
-
+    /**
+     * Moves the paddle to the left by a predefined amount.
+     * The method checks if the new position is within the boundaries of the game scene,
+     * and if so, updates the paddle's position in the model and view.
+     */
         public void moveLeft() {
         int moveAmount = 15;
         if (model.getxPaddle() - moveAmount >= 0) {
@@ -124,7 +128,11 @@ public class GameController implements EventHandler<KeyEvent>,  GameEngine.OnAct
 
 
     }
-
+    /**
+     * Moves the paddle to the right by a predefined amount.
+     * The method checks if the new position is within the boundaries of the game scene,
+     * and if so, updates the paddle's position in the model and view.
+     */
     public void moveRight() {
         int moveAmount = 15;
         if (model.getxPaddle() + moveAmount <= (model.getSceneWidth() - model.getPaddleWidth())) {
@@ -138,25 +146,45 @@ public class GameController implements EventHandler<KeyEvent>,  GameEngine.OnAct
     }
 
 
-
+    /**
+     * Stops the leftward movement of the paddle.
+     * This method should be called when the left movement control (like a key) is released.
+     * It typically sets a boolean flag indicating that leftward movement should cease.
+     */
     private void stopPaddleLeft() {
         // Add your logic to stop the leftward movement of the paddle
         // For example, set movingLeft to false if you use a boolean flag
         movingLeft = false;
     }
 
-    // Handle right paddle stop when the right arrow key is released
+    /**
+     * Stops the rightward movement of the paddle.
+     * This method should be called when the right movement control (like a key) is released.
+     * It typically sets a boolean flag indicating that rightward movement should cease.
+     */
     private void stopPaddleRight() {
         // Add your logic to stop the rightward movement of the paddle
         // For example, set movingRight to false if you use a boolean flag
         movingRight = false;
     }
-
+    /**
+     * Updates the score view.
+     * Displays a score label at the specified coordinates in the game view.
+     *
+     * @param x The x-coordinate where the score label should be displayed.
+     * @param y The y-coordinate where the score label should be displayed.
+     * @param score The score to display.
+     */
     public void updateScoreView(double x, double y, int score) {
         view.showScoreLabel(x, y, score);
     }
 
-
+    /**
+     * Updates the appearance of the ball based on the given status.
+     * This could involve changing the ball's color or texture to reflect different game states.
+     *
+     * @param status A boolean indicating the new state of the ball.
+     */
     void updateBallAppearance(boolean status) {
         view.updateBallAppearance(status);
     }
@@ -272,7 +300,6 @@ public class GameController implements EventHandler<KeyEvent>,  GameEngine.OnAct
         engine.start();
         System.out.println("Game restarted successfully.");
     }
-
 
     /**
      * Updates the paddle's view in the game.

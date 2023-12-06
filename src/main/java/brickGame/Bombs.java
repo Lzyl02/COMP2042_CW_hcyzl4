@@ -62,32 +62,55 @@ public class Bombs implements Serializable {
             bomb.setCenterY(this.y); // Update the bomb's position
         }
     }
-
-    // Return the bomb's graphic
+    /**
+     * Retrieves the graphical representation of a bomb as a Circle.
+     * @return The Circle object representing the bomb.
+     */
     public Circle getCircle() {
         return bomb;
     }
 
+    /**
+     * Gets the x-coordinate of the bomb's position.
+     * @return The x-coordinate of the bomb.
+     */
     public double getX() {
         return x;
     }
 
+    /**
+     * Gets the y-coordinate of the bomb's position.
+     * @return The y-coordinate of the bomb.
+     */
     public double getY() {
         return y;
     }
-
+    /**
+     * Checks if the bomb has been taken.
+     * @return True if the bomb has been taken, false otherwise.
+     */
     public boolean isTaken() {
         return taken;
     }
 
+    /**
+     * Sets the taken status of the bomb.
+     * @param taken True to indicate the bomb has been taken, false otherwise.
+     */
     public void setTaken(boolean taken) {
         this.taken = taken;
     }
-
+    /**
+     * Sets the last time when the bomb was caught.
+     * @param time The time (in milliseconds or another time unit) when the bomb was last caught.
+     */
     public void setLastCaughtTime(long time) {
         this.lastCaughtTime = time;
     }
-
+    /**
+     * Gets the last time when the bomb was caught.
+     * @return The time (in milliseconds or another time unit) when the bomb was last caught.
+     */
     public long getLastCaughtTime() {
         return this.lastCaughtTime;
     }

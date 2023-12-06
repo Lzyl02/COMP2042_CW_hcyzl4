@@ -39,6 +39,12 @@ public class Main extends Application {
     }
 
 
+    /**
+     * The main entry point for the JavaFX application.
+     * This method launches the JavaFX application.
+     *
+     * @param args Command-line arguments passed to the application.
+     */
     public static void main(String[] args) {
         launch(args);
     }

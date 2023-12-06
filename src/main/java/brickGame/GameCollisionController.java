@@ -143,12 +143,7 @@ public class GameCollisionController {
         addBombToView(bomb); // 将炸弹添加到视图中
     }
 
-    /**
-     * Handles the behavior when a chocolate block is hit by the ball.
-     * This method is responsible for creating a chocolate bonus and updating the game model and view.
-     *
-     * @param block The chocolate block that was hit.
-     */
+
     private void handleChocoBlock(Block block) {
         System.out.println("Handling chocolate block at row: " + block.row + ", column: " + block.column);
         final Bonus choco = new Bonus(block.row, block.column);

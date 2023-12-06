@@ -1,7 +1,15 @@
 package brickGame;
 
 import java.io.Serializable;
-
+/**
+ * Represents a serializable block entity in the game.
+ * This class is used for serializing block data, allowing it to be saved, transferred, or loaded across different sessions or systems.
+ *
+ * It contains essential attributes of a block, such as its row and column positions within the grid, and its type.
+ * The type attribute can indicate different characteristics or behaviors of the block in the game.
+ *
+ * Implementing the {@link java.io.Serializable} interface allows instances of this class to be serialized and deserialized.
+ */
 public class BlockSerializable implements Serializable {
     public final int row;
     public final int j;

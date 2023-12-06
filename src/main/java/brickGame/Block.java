@@ -30,32 +30,11 @@ public class Block implements Serializable {
     private boolean hasGeneratedBomb = false;
 
 
-    public void setDestroyed(boolean destroyed) {
-        isDestroyed = destroyed;
-    }
-
     public boolean isDestroyed = false;
 
     private Color color;
 
-
-    public static Block getBlock() {
-        return block;
-    }
-
-    public int getType() {
-        return type;
-    }
-
     public int type;
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
-    }
 
     public int x;
     public int y;
@@ -65,12 +44,7 @@ public class Block implements Serializable {
     private int paddingTop = height * 2;
     private int paddingH = 50;
 
-    public Rectangle getRect() {
-        return rect;
-    }
-
     public Rectangle rect;
-
 
     public final static int NO_HIT = -1;
     public final static int HIT_RIGHT = 0;
@@ -84,6 +58,52 @@ public class Block implements Serializable {
     public static final int BLOCK_HEART = 102;
     public static final int BLOCK_DAEMON = 103;
 
+    /**
+     * Sets the destroyed state of the block.
+     * @param destroyed True if the block is to be marked as destroyed, false otherwise.
+     */
+    public void setDestroyed(boolean destroyed) {
+        isDestroyed = destroyed;
+    }
+
+    /**
+     * Retrieves the static instance of a Block.
+     * Note: This method's implementation depends on how the static instance is managed in your class.
+     * @return The static instance of Block.
+     */
+    public static Block getBlock() {
+        return block;
+    }
+
+    /**
+     * Gets the type of the block.
+     * @return The type of the block, which could be one of the predefined constants like BLOCK_NORMAL, BLOCK_CHOCO, etc.
+     */
+    public int getType() {
+        return type;
+    }
+
+    /**
+     * Gets the x-coordinate of the block's position.
+     * @return The x-coordinate representing the block's horizontal position.
+     */
+    public int getX() {
+        return x;
+    }
+    /**
+     * Gets the y-coordinate of the block's position.
+     * @return The y-coordinate representing the block's vertical position.
+     */
+    public int getY() {
+        return y;
+    }
+    /**
+     * Retrieves the Rectangle shape that visually represents the block in the game.
+     * @return The Rectangle shape of the block.
+     */
+    public Rectangle getRect() {
+        return rect;
+    }
 
     /**
      * Creates a new block with specified parameters.
@@ -217,40 +237,61 @@ public class Block implements Serializable {
         return NO_HIT;
     }
 
-
-
+    /**
+     * Retrieves the top padding of the block.
+     * @return The padding from the top of the block.
+     */
     public static int getPaddingTop() {
         return block.paddingTop;
     }
 
+    /**
+     * Retrieves the horizontal padding of the block.
+     * @return The horizontal padding of the block.
+     */
     public static int getPaddingH() {
         return block.paddingH;
     }
-
+    /**
+     * Retrieves the height of the block.
+     * @return The height of the block.
+     */
     public static int getHeight() {
         return block.height;
     }
-
+    /**
+     * Retrieves the height of the block.
+     * @return The height of the block.
+     */
     public static int getWidth() {
         return block.width;
     }
 
-    public Color getColor() {
-        return color;
-    }
-
+    /**
+     * Retrieves the column position of the block in the grid.
+     * @return The column number where the block is located.
+     */
     public int getColumn() {
         return column;
     }
-
+    /**
+     * Retrieves the row position of the block in the grid.
+     * @return The row number where the block is located.
+     */
     public int getRow() {
         return row;
     }
-
+    /**
+     * Checks if the block has generated a bomb.
+     * @return True if the block has generated a bomb, false otherwise.
+     */
     public boolean hasGeneratedBomb() {
         return hasGeneratedBomb;
     }
-
+    /**
+     * Sets the state of bomb generation for the block.
+     * @param hasGeneratedBomb True to indicate that the block has generated a bomb, false otherwise.
+     */
     public void setGeneratedBomb(boolean hasGeneratedBomb) {
         this.hasGeneratedBomb = hasGeneratedBomb;
     }

@@ -148,11 +148,22 @@ public class GameViewInit {
     }
 
 
-    // Getters for the ball and rectangle
+    /**
+     * Retrieves the Circle object representing the ball in the game.
+     * This method is used to access the ball's graphical representation for updating or querying its properties.
+     *
+     * @return The Circle object representing the ball.
+     */
     public Circle getBall() {
         return ball;
     }
 
+    /**
+     * Retrieves the Rectangle object representing the paddle (or another rectangular object) in the game.
+     * This method is used to access the paddle's graphical representation for updating or querying its properties.
+     *
+     * @return The Rectangle object representing the paddle.
+     */
     public Rectangle getRect() {
         return rect;
     }
