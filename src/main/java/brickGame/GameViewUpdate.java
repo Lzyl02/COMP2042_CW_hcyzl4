@@ -20,6 +20,7 @@ import java.util.Random;
 
 /**
  * GameViewUpdate is responsible for updating the graphical components of the game view.
+ * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/GameViewUpdate.java">GameViewUpdate.java</a>
  */
 public class GameViewUpdate {
     private Pane root;

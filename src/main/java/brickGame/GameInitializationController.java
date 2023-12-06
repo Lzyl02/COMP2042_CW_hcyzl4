@@ -9,7 +9,7 @@ import javafx.scene.paint.Color;
  * Controls the initialization process of the brick game.
  * This includes setting up the game model, view, engine, and bonus controller.
  *
- * * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/GameEngine.java">GameInitializationController.java</a>
+ *  @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/GameInitializationController.java">GameInitializationController.java</a>
  */
 public class GameInitializationController {
     private GameModel model;

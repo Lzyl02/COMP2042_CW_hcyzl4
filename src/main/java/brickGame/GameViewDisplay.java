@@ -8,6 +8,7 @@ import javafx.scene.control.Button;
 import javafx.util.Duration;
 /**
  * The GameViewDisplay class handles the display of messages and notifications within the game view.
+ * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/GameViewDisplay.java">GameViewDisplay.java</a>
  */
 public class GameViewDisplay {
     private Pane root;

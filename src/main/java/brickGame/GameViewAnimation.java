@@ -5,6 +5,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 /**
  * The GameViewAnimation class is responsible for animating UI elements in the game view.
+ *
+ * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/GameViewAnimation.java">GameViewAnimation.java</a>
  */
 public class GameViewAnimation {
     private Pane root;

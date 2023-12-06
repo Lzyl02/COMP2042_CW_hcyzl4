@@ -9,6 +9,10 @@ import javafx.stage.Stage;
  * The main class of the JavaFX application.
  * This class is responsible for creating the main window of the game and initializing the game's model, view, and controller.
  * It also handles keyboard input and forwards it to the game controller.
+ *Old
+ * @see <a href="https://github.com/kooitt/CourseworkGame/blob/master/src/main/java/brickGame/Main.java">Main.java</a>
+ * New
+ * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/Main.java">Main.java</a>
  */
 public class Main extends Application {
     /**

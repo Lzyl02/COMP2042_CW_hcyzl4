@@ -21,6 +21,7 @@ import java.util.Random;
 /**
  * GameView is responsible for managing and updating the graphical components of the brick game.
  * It interacts with GameModel for game state and GameController for event handling.
+ *@see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/GameView.java">GameView.java</a>
  */
 public class GameView {
     private GameController controller;

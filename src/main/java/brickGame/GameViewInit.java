@@ -12,6 +12,7 @@ import javafx.scene.shape.Rectangle;
 import java.util.List;
 /**
  * The GameViewInit class is responsible for initializing and managing the UI components of the game.
+ * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/GameViewInit.java">GameViewInit.java</a>
  */
 public class GameViewInit {
     private Pane root;

@@ -11,6 +11,7 @@ import java.util.Random;
 /**
  * Represents the game model for a brick game, holding all the game's state and logic.
  * It includes the game's score, block information, paddle and ball positions, and other game state variables.
+ * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/GameModel.java">GameModel.java</a>
  */
 public class GameModel {
     /**
