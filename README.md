@@ -1,4 +1,4 @@
-# Project Title
+# BRICK GAME
 
 ## Table of Contents
 - Compilation Instructions
@@ -30,12 +30,15 @@
 1. Go to `File` > `Project Structure` > `SDKs`.
 2. Click the `+` button, select `JDK`, and navigate to the JDK 21 installation path.
 3. Apply the changes.
+   
    <img width="836" alt="截屏2023-12-05 17 34 23" src="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/assets/87651207/3354bab2-933f-4b8f-a967-a96e715e46cf">
 
 #### Setting Project JDK and Language Level
 1. Navigate to `File` > `Project Structure` > `Project`.
 2. Choose the configured JDK 21 as the `Project SDK`.
-3. Set `Language level` to 19.<img width="825" alt="截屏2023-12-05 17 34 15" src="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/assets/87651207/7ab0b680-11de-49ff-93dc-610b4960ea18">
+4. Set `Language level` to 19.
+
+   <img width="825" alt="截屏2023-12-05 17 34 15" src="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/assets/87651207/7ab0b680-11de-49ff-93dc-610b4960ea18">
 
 
 #### Adding JavaFX Library to the Project
@@ -50,34 +53,160 @@
 ### Building and Running the Project
 1. Use the Maven Projects tool window in IntelliJ IDEA and run the `clean` and `install` lifecycle phases to build the project.
 2. Right-click the `src/main/java` directory and select `Run 'All Tests'` to compile and execute the application.
-
-
+   
 ## Implemented and Working Properly
-List and describe the features that are successfully implemented and functioning correctly.
 
-### Feature 1
-- Brief description of Feature 1.
+### Feature 1: Game Saving Functionality
 
-### Feature 2
-- Brief description of Feature 2.
+#### Brief Description
+The game includes a robust and effective game saving functionality. This feature allows players to save their current game state, including level, score, heart count, and the status of each block (destroyed or intact) along with the ball, paddle positions, and other game dynamics. Here’s how it functions:
 
-(Continue listing other features...)
+- **Saving Process**: The game saving process is initiated through a method called `saveGame()`. This method serializes and writes the current game state to a file, ensuring that key game data is preserved.
+  - The method begins by fetching the current blocks in the game and printing the saving process details to the console.
+  - A new thread is created to handle the file operations, avoiding any interference with the game's UI thread.
+  - The game state, including level, score, heart count, and specific positions of the ball and paddle, is written to the file.
+  - Each block's state is checked, and only non-destroyed blocks are serialized and saved, ensuring efficient data storage.
+  - A confirmation message "Game Saved" is displayed on the game screen once the saving process is completed.
+
+- **Loading Process**: The game's loading functionality is encapsulated in the `loadFromSave()` method. This method reads the saved game state from a file and updates the `GameModel` and view accordingly.
+  - It clears existing blocks and recreates them based on the loaded data, ensuring the game view reflects the saved state accurately.
+  - The game view is updated to match the loaded data, including reinitializing the ball and paddle views and displaying the saved blocks.
+  - The method concludes by restarting the game engine, effectively resuming the game from the saved state.
+
+#### Implementation Details
+- **Threading**: The use of a separate thread for saving the game state ensures that the game's performance remains unaffected during the save operation.
+- **Serialization**: Utilizing object serialization to handle the game state ensures a reliable and easily manageable save format.
+- **User Feedback**: The game provides immediate visual feedback to the player when the game is saved or loaded, enhancing user experience.
+  
+  <img width="277" alt="截屏2023-12-06 13 02 34" src="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/assets/87651207/dedaf3fa-857b-4c2a-8405-571b8374be7c"> 
+
+  <img width="380" alt="截屏2023-12-06 12 20 30" src="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/assets/87651207/5b4b31bd-908a-4764-89a7-36adbde7861d">
+   （use "command+s/ctrl+s" in game）
+
+### Feature 2: Daemon Block and Bombs Interaction with Score Penalty
+
+#### Brief Description
+The game includes an interactive feature where hitting a `Daemon` block causes a `Bombs` object to drop. This functionality adds a layer of challenge and strategy to the game. Players must navigate the game space to avoid or catch these falling bombs, which directly impacts their score.
+
+#### Key Functionalities
+- **Daemon Block Bomb Generation**: Upon collision with a `Daemon` block, a `Bombs` object is generated and begins to fall down the game screen. This mechanism is triggered within the game collision handling logic, specifically when the ball interacts with a `Daemon` block.
+- **Graphical Representation of Bombs**: Each bomb is represented as a `Circle` with a specific graphical pattern, created and managed by the `Bombs` class. The bombs are visually distinct and recognizable, enhancing player awareness.
+- **Bomb Falling Mechanism**: Bombs have a falling mechanic, controlled by their `fallDown()` method. This method updates the bomb's vertical position, simulating a falling effect.
+- **Score Penalty on Catching Bombs**: If a bomb is caught by the player (i.e., it collides with the paddle), the player loses one point from their score. This feature is handled by collision detection between the bomb and the paddle, updating the score accordingly.
+
+#### Implementation Details
+- **Bomb Creation on Daemon Collision**: When the ball hits a `Daemon` block, a new `Bombs` object is instantiated at the block's position, initiating its fall.
+- **Score Update on Bomb Catch**: The game model is updated to reflect the new score when a bomb is caught. This is accomplished by detecting the bomb-paddle collision and updating the score in the `GameModel`.
+- **Visual Feedback**: The game view is updated to provide immediate visual feedback to the player, with the bomb appearing and moving down the screen and the score being adjusted upon bomb catch.
+
+<img width="63" alt="截屏2023-12-06 12 27 01" src="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/assets/87651207/42c1dcb5-2dab-4b8f-bcc6-94d3859c1635"> （Bombs）
+
+<img width="80" alt="截屏2023-12-06 12 27 31" src="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/assets/87651207/71537de3-0090-44ed-b505-ef04943c003e"> （daemon）
+
+### Feature 3: Dynamic Increase of Bombs with Game Levels
+
+#### Brief Description
+In this brick-style game, the number of Bombs (`Bombs` objects) dynamically increases as the player progresses through levels. This feature adds to the game's complexity and challenge, requiring players to adapt their strategies as they advance.
+
+#### Key Functionalities
+- **Level-Based Bomb Generation**: The number of Bombs in the game is directly tied to the game's current level. As the player moves to higher levels, the number of Bombs that appear in response to hitting `Daemon` blocks also increases.
+- **Bombs Placement and Falling Speed**: Each Bomb has a defined falling speed and is positioned based on its row and column in the game grid. This strategic placement influences the game's difficulty and requires players to be more vigilant as they progress.
+
+#### Implementation Details
+- **Bombs Creation Logic**: When a `Daemon` block is hit, a Bomb is generated for each block. The number of `Daemon` blocks and, consequently, Bombs, is proportional to the game level.
+- **Graphical Representation**: Each Bomb is visually represented as a `Circle` object with a unique image pattern. This representation makes Bombs easily distinguishable from other game elements.
+- **Game View Updates**: The `GameView` class, responsible for managing the game's graphical components, updates the display to show the Bombs as they are generated and begin to fall. This includes adding new Bomb objects to the view, updating their positions, and removing them when necessary.
+- **Scalability with Levels**: The game logic ensures that the challenge presented by Bombs scales with the game level, providing a consistent increase in difficulty and enhancing the overall gameplay experience.
+
+### Feature 4: Adaptive Paddle Resizing with Level Progression
+
+#### Brief Description
+The game includes an innovative feature where the paddle's size dynamically adjusts as the player progresses through levels. This mechanism enhances the game's difficulty by gradually reducing the paddle's width, requiring more precise and skillful navigation.
+
+#### Key Functionalities
+- **Level-Dependent Resizing**: The paddle's width decreases as the player advances through levels, introducing a gradual but noticeable increase in difficulty.
+- **Real-Time Paddle Adjustment**: The game intelligently modifies the paddle's width in real time, based on the current level, to challenge the player's adaptability and control skills.
+
+#### Implementation Details
+- **Paddle Resizing Logic**: The `updatePaddleView` method in the `GameController` class is responsible for adjusting the paddle's size. It calculates the new width based on the game model's current state and level progression.
+- **Graphical Update**: The `GameView` class, handling the visual elements, updates the paddle's width on the screen. This change is executed via the `updatePaddleSize` method in the `GameViewUpdate` class.
+- **Enhanced Gameplay Dynamics**: This feature makes the game progressively challenging, requiring players to constantly adapt their playing style as they move to higher levels.
+
+#### Impact on Player Experience
+- **Elevated Challenge**: The shrinking paddle size at higher levels adds an extra layer of difficulty, keeping the gameplay engaging and challenging.
+- **Strategic Gameplay Evolution**: Players are compelled to refine their strategies and improve their precision to cope with the smaller paddle, making the game more intriguing and rewarding.
+
+### Feature 5: Game Restart After Death
+
+#### Brief Description
+Our game incorporates a crucial feature that allows players to restart the game from the beginning after losing all lives. This functionality ensures a seamless experience, enabling players to quickly jump back into the action without any unnecessary delays or interruptions.
+
+#### Key Functionalities
+- **Immediate Restart Capability**: When players lose all their lives, they can instantly restart the game, preserving the flow and engagement.
+- **Complete Reset of Game State**: The game completely resets its state to initial conditions, offering a fresh start with default settings.
+
+#### Implementation Details
+- **Game State Reset**: The `restartGame` method in the `GameController` class first invokes the `resetGame` function, ensuring that the game model is returned to its original state.
+- **Clearing and Reinitializing UI**: It then clears existing game elements and reinitializes the UI components, ensuring that the game view reflects the reset state accurately.
+- **Score and Heart Update**: The game view is updated with the reset score and heart count, providing players with clear feedback that the game has restarted.
+- **Game Engine Restart**: Finally, the game logic, including timers and game loops, is restarted, signaling the beginning of a new game session.
+
+#### Impact on Player Experience
+- **Enhanced Replayability**: This feature allows players to easily try again, enhancing the game's replay value.
+- **User-Friendly Interaction**: The ability to quickly restart encourages continuous play and experimentation with different strategies.
+
+### Feature 6: Ball Rebounds on Collision with Block Sides
+
+#### Brief Description
+In our brick game, each block (represented by the `Block` class) has the capability to detect collisions with the ball and respond appropriately. One key feature is the ball's ability to rebound when it hits the left or right sides of a block. This functionality adds a realistic aspect to the game physics, enhancing the overall player experience.
+
+#### Key Functionalities
+- **Accurate Collision Detection**: Utilizes the `checkHitToBlock` method to accurately determine if and where the ball collides with a block.
+- **Directional Rebound**: The ball rebounds in a different direction based on whether it hits the left or right side of a block.
+
+#### Implementation Details
+- **Position Calculation**: The method calculates the relative position of the ball to the block, considering the ball's radius and the block's dimensions.
+- **Collision Detection Logic**: Determines the collision type (left, right, top, bottom) based on the position of the ball relative to the block.
+- **Rebound Effect**: On detecting a collision on either left or right side, the game logic reverses the ball's horizontal direction, simulating a realistic rebound.
+
+#### Impact on Player Experience
+- **Enhanced Game Dynamics**: This feature introduces additional challenges and requires players to anticipate the ball's trajectory post-collision, making the game more engaging.
+- **Improved Physics Realism**: The directional rebound on side collisions aligns with real-world physics, offering a more intuitive and satisfying gameplay experience.
 
 ## Implemented but Not Working Properly
-Enumerate the features that are implemented but not functioning correctly. Describe the issues and any troubleshooting steps attempted.
 
-### Feature X
-- Description of the issue.
-- Steps taken to address it.
+### Feature X: Game Restart Mechanism
 
-(Continue listing other features with issues...)
+#### Description of the Issue
+In the game's restart feature, an issue arises where the score and heart count do not reset as intended. While the level resets correctly, reflecting the new game's starting point, the score and heart count remain at 0, failing to return to their initial values. This inconsistency impacts the gameplay experience, as players expect a full reset when restarting the game.
+
+#### Steps Taken to Address It
+- **Rebranding as "God Mode"**: Given the malfunction in resetting scores and hearts, the restart feature has been adapted into a "God Mode." This mode provides an unlimited gameplay experience without the constraints of score and heart count, allowing players to practice and explore the game without the risk of losing.
+- **Troubleshooting Attempts**:
+    - **Code Review**: Analyzed the game model's reset logic, particularly focusing on the sections responsible for resetting scores and hearts.
+    - **Debugging and Testing**: Implemented a series of debugging tests to trace how the game model handles score and heart count during the restart. This involved examining variable states and function calls related to these aspects.
+    - **Community Feedback**: Sought feedback and solutions from online developer forums and gaming communities, aiming to gather insights or similar experiences that could aid in resolving this issue.
+
+#### Current Status
+The game's restart functionality currently leads to a consistent level reset but fails to reset the score and heart count, which remain at 0. This modified functionality has been presented as a unique gameplay mode, albeit different from the standard restart experience. Rectifying this issue to ensure a complete game reset, including scores and hearts, is a key focus for upcoming updates.
 
 ## Features Not Implemented
-Identify and explain the features that were not implemented, with reasons for their exclusion.
 
-### Feature Y
-- Reason for non-implementation.
+### Feature Y: Leaderboard and Friend System
 
+#### Reason for Non-Implementation
+
+The concept of a leaderboard and friend system, where skilled players can see their scores compared to others and add friends to track each other's scores, was not implemented in the game due to the following reasons:
+
+1. **Technical Complexity**: Implementing a robust and scalable leaderboard system requires handling large amounts of data and ensuring data consistency and security. It also demands a backend infrastructure to store player scores and profiles, which adds a layer of complexity beyond the game's primary mechanics.
+
+2. **Resource Limitations**: Developing a networking component for the game, necessary for a leaderboard and friend system, demands additional resources in terms of development time, expertise, and financial investment. These resources might have been limited or prioritized for other core features of the game.
+
+3. **Focus on Core Gameplay**: The primary focus of the game's development was likely on polishing and enhancing the core gameplay mechanics. Integrating social features such as a leaderboard and friend system might have been considered secondary or non-essential in the context of the game's main objectives.
+
+4. **Privacy Concerns**: Implementing social features raises concerns about user privacy and data protection. The additional responsibility of managing and securing player data might have been a deterrent, especially if the development team lacked the necessary expertise in this area.
+
+5. **Future Expansion Potential**: The feature might be considered for future updates or expansions, especially once the core game has been established and there is a demand for more social interaction among players. Keeping it out of the initial release allows for focused testing and feedback on the primary gameplay.
 
 ## New Java Classes
 
