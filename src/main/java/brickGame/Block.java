@@ -13,14 +13,8 @@ import java.io.Serializable;
  * Represents an individual block entity in the game.
  * This class is responsible for managing the block's position, size, color, and type,
  * and provides methods for detecting and handling collisions with the ball.
- *
- * Old
- * @see <a href="https://github.com/kooitt/CourseworkGame/blob/master/src/main/java/brickGame/Block.java">Block.java</a>
- * New
- * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/Block.java">Block.java</a>
- *
  * Blocks can have different types, such as normal blocks, chocolate blocks, star blocks, etc.
- *
+ * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/Block.java">Block.java</a>
  */
 public class Block implements Serializable {
 

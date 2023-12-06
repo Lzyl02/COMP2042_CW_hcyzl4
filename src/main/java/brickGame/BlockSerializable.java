@@ -7,11 +7,8 @@ import java.io.Serializable;
  *
  * It contains essential attributes of a block, such as its row and column positions within the grid, and its type.
  * The type attribute can indicate different characteristics or behaviors of the block in the game.
- * Old
- * @see <a href="https://github.com/kooitt/CourseworkGame/blob/master/src/main/java/brickGame/BlockSerializable.java">BlockSerializable.java</a>
- * New
- * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/BlockSerializable.java">BlockSerializable.java</a>
  * Implementing the {@link java.io.Serializable} interface allows instances of this class to be serialized and deserialized.
+ * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/BlockSerializable.java">BlockSerializable.java</a>
  */
 public class BlockSerializable implements Serializable {
     public final int row;

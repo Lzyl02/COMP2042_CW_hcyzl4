@@ -10,9 +10,6 @@ import java.util.ArrayList;
  * Responsible for reading and loading saved game data.
  * This class contains various attributes and methods needed to restore the game state from a save file,
  * including level, score, hearts, number of destroyed blocks, and physical states in the game.
- *Old
- *@see <a href="https://github.com/kooitt/CourseworkGame/blob/master/src/main/java/brickGame/LoadSave.java">LoadSave.java</a>
- *New
  * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/LoadSave.java">LoadSave.java</a>
  */
 public class LoadSave {

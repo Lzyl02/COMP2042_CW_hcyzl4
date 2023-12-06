@@ -7,9 +7,6 @@ import java.util.concurrent.TimeUnit;
 /**
  * GameEngine class is responsible for managing the main game loop and coordinating various game updates.
  * It provides methods to start, stop, and restart the game, and allows setting the frame rate.
- *Old
- * @see <a href="https://github.com/kooitt/CourseworkGame/blob/master/src/main/java/brickGame/GameEngine.java">GameEngine.java</a>
- * New
  * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/GameEngine.java">GameEngine.java</a>
  */
 public class GameEngine {
