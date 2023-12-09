@@ -75,6 +75,7 @@ The game includes a robust and effective game saving functionality. This feature
   <img width="277" alt="截屏2023-12-06 13 02 34" src="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/assets/87651207/dedaf3fa-857b-4c2a-8405-571b8374be7c"> 
 
   <img width="380" alt="截屏2023-12-06 12 20 30" src="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/assets/87651207/5b4b31bd-908a-4764-89a7-36adbde7861d">
+   
    （use "command+s/ctrl+s" in game）
 
 ### Feature 2: Daemon Block and Bombs Interaction with Score Penalty
