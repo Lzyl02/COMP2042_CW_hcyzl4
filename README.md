@@ -26,25 +26,16 @@
 2. Select `Open or Import` and navigate to the cloned project directory.
 3. Open the project by clicking on the `pom.xml` file and selecting `Open as Project`.
 
-#### Configuring JDK for the Project
-1. Go to `File` > `Project Structure` > `SDKs`.
-2. Click the `+` button, select `JDK`, and navigate to the JDK 21 installation path.
-3. Apply the changes.
-
-   <img width="836" alt="截屏2023-12-05 17 34 23" src="/Users/lizhengyoule/Desktop/COMP2042_CW_hcyzl4/src/main/resources/jdk.png">
+#### Adding JavaFX Library to the Project
+1. Navigate to `File` > `Project Structure` > `Libraries`.
+2. Click the `+` button and select `Java`.
+3. Navigate to the JavaFX SDK `lib` directory, select all JAR files, and add them to the project.
 
 #### Setting Project JDK and Language Level
 1. Navigate to `File` > `Project Structure` > `Project`.
 2. Choose the configured JDK 21 as the `Project SDK`.
 4. Set `Language level` to 19.
 
-   <img width="825" alt="截屏2023-12-05 17 34 15" src="/Users/lizhengyoule/Desktop/COMP2042_CW_hcyzl4/src/main/resources/language.png">
-
-
-#### Adding JavaFX Library to the Project
-1. Navigate to `File` > `Project Structure` > `Libraries`.
-2. Click the `+` button and select `Java`.
-3. Navigate to the JavaFX SDK `lib` directory, select all JAR files, and add them to the project.
 
 #### Maven Configuration
 1. Ensure that your `pom.xml` file is present at the root of the project directory.
@@ -78,9 +69,6 @@ The game includes a robust and effective game saving functionality. This feature
 - **Serialization**: Utilizing object serialization to handle the game state ensures a reliable and easily manageable save format.
 - **User Feedback**: The game provides immediate visual feedback to the player when the game is saved or loaded, enhancing user experience.
 
-
-  <img width="290" alt="截屏2023-12-06 12 20 30" src="/Users/lizhengyoule/Desktop/COMP2042_CW_hcyzl4/src/main/resources/save.png">
-   （use button "s" in game）
 
 ### Feature 2: Daemon Block and Bombs Interaction with Score Penalty
 

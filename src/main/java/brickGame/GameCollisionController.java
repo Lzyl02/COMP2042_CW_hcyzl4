@@ -5,7 +5,6 @@ package brickGame;
  * Handles collision interactions in a brick-style game.
  * Manages collision detection between the ball and blocks, updating the game state and view accordingly.
  *
- * @see <a href="https://github.com/Lzyl02/COMP2042_CW_hcyzl4/blob/main/src/main/java/brickGame/GameCollisionController.java">GameCollisionController.java</a>
  */
 public class GameCollisionController {
 

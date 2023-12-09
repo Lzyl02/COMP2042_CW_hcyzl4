@@ -447,6 +447,12 @@ public class GameController implements EventHandler<KeyEvent>,  GameEngine.OnAct
         // Load game state from the model
         LoadSave loadSave = new LoadSave();
         loadSave.read();
+        // Debug: Print game state before loading from save
+        System.out.println("Before loading from save:");
+        System.out.println("Current Level: " + model.getLevel());
+        System.out.println("Destroyed Block Count: " + model.getDestroyedBlockCount());
+        System.out.println("Total Blocks: " + model.getBlocks().size());
+
         view.hideGameControlButtons();
 
         // Set the loaded data in the model
@@ -459,6 +465,7 @@ public class GameController implements EventHandler<KeyEvent>,  GameEngine.OnAct
                 loadSave.colideToRightWall, loadSave.colideToLeftWall, loadSave.colideToRightBlock,
                 loadSave.colideToBottomBlock, loadSave.colideToLeftBlock, loadSave.colideToTopBlock
         );
+        System.out.println("Game properties after load: Level - " + model.getLevel() + ", Score - " + model.getScore() + ", etc.");
 
         // Clear existing blocks before loading new ones
         model.clearBlocks();
@@ -476,16 +483,25 @@ public class GameController implements EventHandler<KeyEvent>,  GameEngine.OnAct
         // Update view based on loaded data
 //        view.initBallView(model.getxBall(), model.getyBall(), model.getBallRadius());
 //        view.initBreakView(model.getxPaddle(), model.getyPaddle(), model.getPaddleWidth(), model.getPaddleHeight());
-        System.out.println("Blocks to display: " + model.getBlocks().size());
+
+        // Debug: Print game state after loading from save
+        System.out.println("After loading from save:");
+        System.out.println("Loaded Level: " + loadSave.level);
+        System.out.println("Loaded Destroyed Block Count: " + loadSave.destroyedBlockCount);
+        System.out.println("Total Blocks Loaded: " + model.getBlocks().size());
 
         view.displayBlocks();
         view.updateScoreAndHeart(model.getScore(), model.getHeart());
 
-        // Ensure onAction is set for the game engine
-        this.engine.setOnAction(this);
+        Platform.runLater(() -> {
+            System.out.println("Game initialization completed.");
+            System.out.println("Starting game engine...");
+            engine.setOnAction(this);
 
-        // Start game engine with loaded state
-        engine.restart();
+            // 启动游戏引擎
+            engine.setFps(120);
+            engine.start();
+        });
     }
 
     /**
@@ -903,7 +919,7 @@ public class GameController implements EventHandler<KeyEvent>,  GameEngine.OnAct
         model.setLevel(level);
         model.setScore(score);
         model.setHeart(heart);
-        model.setDestroyedBlockCount(destroyedBlockCount);
+        model.setDestroyedBlockCount(0);
 
         model.setxBall(xBall);
         model.setyBall(yBall);
