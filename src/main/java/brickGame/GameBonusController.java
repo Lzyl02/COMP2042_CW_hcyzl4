@@ -60,7 +60,7 @@ public class GameBonusController {
      * @return true if the bonus is out of bounds or taken, false otherwise.
      */
     private boolean shouldRemoveBonus(Bonus bonus) {
-        // 示例逻辑: 如果 bonus 的 Y 坐标超过了屏幕底部或者它被标记为 taken，则应该移除
+
         return bonus.getY() > model.getSceneHeight()  || bonus.isTaken();
     }
 

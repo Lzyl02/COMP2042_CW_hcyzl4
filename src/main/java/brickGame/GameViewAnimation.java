@@ -30,7 +30,7 @@ public class GameViewAnimation {
             @Override
             public void run() {
                 // 设置动画的持续时间和步骤
-                int duration = 315; // 总持续时间（假设）
+                int duration = 315;
                 int steps = 21; // 总步数
 
                 for (int i = 0; i < steps; i++) {

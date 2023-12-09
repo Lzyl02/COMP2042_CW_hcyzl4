@@ -22,7 +22,7 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
         Pane root = new Pane();
-        Scene scene = new Scene(root, 500, 700); // Scene dimensions as constants or configurable values
+        Scene scene = new Scene(root, 500, 700);
 
         GameModel model = new GameModel(); // 先创建模型
         GameView view = new GameView(root,model); // 接着创建视图

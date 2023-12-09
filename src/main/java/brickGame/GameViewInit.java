@@ -44,15 +44,14 @@ public class GameViewInit {
      * @param isRestart Indicates if the game is being restarted.
      */
     public void initUIComponents(boolean isRestart) {
-        // Initialize labels
-        // Initialize labels dynamically
+
         scoreLabel = new Label();
         heartLabel = new Label();
         levelLabel = new Label();
         updateLabels(); // Update labels with current model values
 
         // Set label positions and other properties
-        heartLabel.setTranslateX(model.getSceneWidth() - 100); // Assuming root has a predefined width
+        heartLabel.setTranslateX(model.getSceneWidth() - 100);
         levelLabel.setTranslateY(20);
         setSceneStyle();
         // Initialize buttons
@@ -65,11 +64,11 @@ public class GameViewInit {
         newGameButton.setTranslateX(220);
         newGameButton.setTranslateY(340);
 
-        // Add components to the root
-        // Add components to the root
+
+
         root.getChildren().addAll(scoreLabel, heartLabel, levelLabel);
 
-        // Add buttons only if it's not a restart
+
         if (!isRestart) {
             root.getChildren().addAll(loadGameButton, newGameButton);
         }
@@ -102,10 +101,10 @@ public class GameViewInit {
      */
     public void setSceneStyle() {
         // Apply the stylesheet to the root pane
-        root.getStylesheets().add("style.css"); // Ensure the path is correct
+        root.getStylesheets().add("style.css");
 
-        // Apply a default style class to the root, if needed
-        root.getStyleClass().add("defaultStyle"); // This should match a class in your CSS
+
+        root.getStyleClass().add("defaultStyle");
     }
 
     /**
@@ -206,8 +205,7 @@ public class GameViewInit {
         scoreLabel.setText("Score: " + model.getScore());
         heartLabel.setText("Heart: " + model.getHeart());
         levelLabel.setText("Level: " + model.getLevel());
-        // Set label positions and other properties
-        // ...
+
     }
 
 

@@ -160,7 +160,7 @@ public class GameEngine {
         while (!isStopped && onAction != null) {
             try {
                 onAction.onPhysicsUpdate();
-                Thread.sleep(16); // 60 times per second
+                Thread.sleep(16);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             }

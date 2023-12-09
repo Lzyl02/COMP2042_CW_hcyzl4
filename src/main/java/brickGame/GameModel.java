@@ -61,7 +61,7 @@ public class GameModel {
     /**
      * The base horizontal speed of the game elements.
      */
-    static final double baseHorizontalSpeed = 1.2; // adjust as needed
+    static final double baseHorizontalSpeed = 1.2;
     private double vX = 4.000;
     /**
      * The vertical velocity of the ball.
@@ -90,8 +90,6 @@ public class GameModel {
     public static String savePathDir = "D:/save/";
 
     private int sceneWidth = 500;
-    private double updateInterval = 1000000000.0 / 240.0; // Adjust the frame rate (240 FPS in this example)
-    private long lastUpdateTime = 0;
     private int sceneHeight = 700;
 
 
@@ -656,7 +654,7 @@ public class GameModel {
         this.chocos = new ArrayList<>();
         this.score = 0;
 
-        // Initialization code...
+
     }
 
     /**

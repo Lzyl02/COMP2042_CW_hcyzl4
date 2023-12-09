@@ -78,7 +78,7 @@ public class GameView {
         this.ball = gameViewInit.getBall();
         this.rect = gameViewInit.getRect();
 
-        // Now create GameViewUpdate with the initialized components
+
         this.gameViewUpdate = new GameViewUpdate(root, ball, rect, scoreLabel, heartLabel, levelLabel);
 
         // Create GameViewDisplay
@@ -152,14 +152,14 @@ public class GameView {
 
     public void clearGameElements() {
         Platform.runLater(() -> {
-            // Remove all elements except for the ball, paddle, and the restartGame button (if it has a unique ID)
+
             root.getChildren().removeIf(node ->
                     (node instanceof Circle && !node.getId().equals("ballId")) ||
                             (node instanceof Rectangle && !node.getId().equals("paddleId")) ||
                             (node instanceof Label) ||
                             (node instanceof Button && (node.getId() == null || !node.getId().equals("restartGameButtonId"))));
 
-            // Reinitialize basic UI components if necessary
+
             gameViewInit.initUIComponents(true);
         });
     }

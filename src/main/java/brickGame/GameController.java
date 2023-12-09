@@ -30,7 +30,7 @@ public class GameController implements EventHandler<KeyEvent>,  GameEngine.OnAct
     private GameBonusController gameBonusController;
 
     private static boolean isExistHeartBlock = false;
-    private Pane root; // Assuming root is of type Pane
+    private Pane root;
 
     private GameView view;
     private boolean movingLeft = false;
@@ -480,9 +480,7 @@ public class GameController implements EventHandler<KeyEvent>,  GameEngine.OnAct
 
         System.out.println("Total Blocks Loaded: " + model.getBlocks().size());
 
-        // Update view based on loaded data
-//        view.initBallView(model.getxBall(), model.getyBall(), model.getBallRadius());
-//        view.initBreakView(model.getxPaddle(), model.getyPaddle(), model.getPaddleWidth(), model.getPaddleHeight());
+
 
         // Debug: Print game state after loading from save
         System.out.println("After loading from save:");

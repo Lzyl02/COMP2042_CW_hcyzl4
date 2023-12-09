@@ -17,7 +17,7 @@ public class GameInitializationController {
     private GameEngine engine;
     private GameBonusController gameBonusController;
 
-    // Constructor and method Javadocs
+
 
     /**
      * Constructs a new GameInitializationController.
@@ -108,11 +108,11 @@ public class GameInitializationController {
         int specialType = random.nextInt(3); // Assuming 3 types of special blocks
         switch (specialType) {
             case 0:
-                return Block.BLOCK_CHOCO; // For example, a block that gives extra points
+                return Block.BLOCK_CHOCO;
             case 1:
-                return Block.BLOCK_HEART; // For example, a block that gives an extra life
+                return Block.BLOCK_HEART;
             case 2:
-                return Block.BLOCK_STAR;  // For example, a block that activates a power-up
+                return Block.BLOCK_STAR;
             default:
                 return Block.BLOCK_NORMAL; // Fallback to a normal block
         }
@@ -144,9 +144,6 @@ public class GameInitializationController {
             initializeGame();
 
             // 初始化球和挡板视图基于模型状态
-
-//            view.initBallView(model.getxBall(), model.getyBall(), model.getBallRadius());
-//            view.initBreakView(model.getxPaddle(), model.getyPaddle(), model.getPaddleWidth(), model.getPaddleHeight());
 
             // 显示所有方块（包括 Daemon block）
             System.out.println("Blocks to display: " + model.getBlocks().size());
